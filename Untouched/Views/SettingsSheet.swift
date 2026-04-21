@@ -10,7 +10,10 @@ struct SettingsSheet: View {
 
     @AppStorage("appearanceMode") private var appearanceModeRaw: Int = AppearanceMode.dark.rawValue
 
-    @State private var showCrisis = false
+    private var appearance: AppearanceMode {
+        AppearanceMode(rawValue: appearanceModeRaw) ?? .dark
+    }
+
     @State private var showTimePicker = false
     @State private var showBackupConsent = false
     @State private var showBackupUnavailable = false
@@ -54,8 +57,6 @@ struct SettingsSheet: View {
                         restoreCoinsRow
                         divider
                         restorePurchaseRow
-                        divider
-                        crisisRow
                     }
                     .padding(.horizontal, 22)
                     .padding(.top, 8)
@@ -69,9 +70,9 @@ struct SettingsSheet: View {
                 }
             }
         }
+        .preferredColorScheme(appearance.colorScheme)
         .presentationBackground(Color.utBackground)
         .presentationDragIndicator(.visible)
-        .sheet(isPresented: $showCrisis) { CrisisResourcesView() }
         .sheet(isPresented: $showTimePicker) { timePickerSheet }
         .alert(Copy.Settings.backupConsentTitle, isPresented: $showBackupConsent) {
             Button(Copy.Settings.backupConsentCancel, role: .cancel) {}
@@ -273,16 +274,6 @@ struct SettingsSheet: View {
         }
     }
 
-    private var crisisRow: some View {
-        linkRow(
-            title: Copy.Settings.crisisResources,
-            subtitle: nil,
-            disabled: false
-        ) {
-            showCrisis = true
-        }
-    }
-
     // MARK: - Row primitives
 
     private var divider: some View {
@@ -408,6 +399,7 @@ struct SettingsSheet: View {
                 .padding(.bottom, 22)
             }
         }
+        .preferredColorScheme(appearance.colorScheme)
         .presentationDetents([.height(340)])
         .presentationBackground(Color.utBackground)
     }
