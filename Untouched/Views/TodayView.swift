@@ -61,9 +61,10 @@ struct TodayView: View {
             VStack(spacing: 22) {
                 VStack(spacing: 6) {
                     LabelText(text: Copy.Today.daysLabel)
+                    let mega = Font.utMegaCount(digits: String(days).count)
                     Text("\(days)")
-                        .font(.utMega)
-                        .tracking(-6)
+                        .font(mega.font)
+                        .tracking(mega.tracking)
                         .foregroundStyle(Color.utTextPrimary)
                         .monospacedDigit()
                         .animation(Motion.utDayRollover, value: days)
