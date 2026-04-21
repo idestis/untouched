@@ -14,18 +14,8 @@ struct CoinDetailView: View {
             Color.utBackground.ignoresSafeArea()
 
             if !reduceGlow {
-                RadialGradient(
-                    colors: [
-                        Color.utCoinAuraInner.opacity(0.55),
-                        Color.utCoinAuraMid.opacity(0.42),
-                        Color.utCoinAuraOuter.opacity(0.35),
-                        Color.utCoinAuraOuter.opacity(0.18)
-                    ],
-                    center: .center,
-                    startRadius: 40,
-                    endRadius: 420
-                )
-                .ignoresSafeArea()
+                CoinAura(intensity: .soft)
+                    .ignoresSafeArea()
             }
 
             VStack(spacing: 0) {

@@ -18,19 +18,9 @@ struct CoinEarnedView: View {
             Color.utBackground.ignoresSafeArea()
 
             if !reduceGlow {
-                RadialGradient(
-                    colors: [
-                        Color.utCoinAuraInner.opacity(0.70),
-                        Color.utCoinAuraMid.opacity(0.55),
-                        Color.utCoinAuraOuter.opacity(0.45),
-                        Color.utCoinAuraOuter.opacity(0.25)
-                    ],
-                    center: .center,
-                    startRadius: 40,
-                    endRadius: 440
-                )
-                .ignoresSafeArea()
-                .opacity(stroke)
+                CoinAura(intensity: .strong)
+                    .ignoresSafeArea()
+                    .opacity(stroke)
             }
 
             VStack(spacing: 0) {

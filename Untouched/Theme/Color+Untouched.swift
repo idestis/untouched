@@ -48,6 +48,14 @@ extension Color {
     static let utCoinAuraInner = Color(hex: "F064A2")
     static let utCoinAuraMid   = Color(hex: "D43B7A")
     static let utCoinAuraOuter = Color(hex: "6B1A3C")
+
+    // Dashed ring for locked (not-yet-earned) coins. White on OLED black,
+    // dim ink on cream — hairline either way.
+    static let utCoinLockedBorder = Color(UIColor { trait in
+        trait.userInterfaceStyle == .dark
+            ? UIColor.white.withAlphaComponent(0.18)
+            : UIColor.black.withAlphaComponent(0.22)
+    })
 }
 
 extension Color {

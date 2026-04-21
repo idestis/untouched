@@ -58,7 +58,7 @@ struct CoinRing: View {
             } else {
                 Circle()
                     .strokeBorder(
-                        Color.white.opacity(0.18),
+                        Color.utCoinLockedBorder,
                         style: StrokeStyle(lineWidth: 1, dash: [4, 4])
                     )
             }
