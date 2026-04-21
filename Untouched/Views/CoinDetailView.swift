@@ -7,7 +7,6 @@ struct CoinDetailView: View {
     @Query private var profiles: [UserProfile]
 
     let coin: EarnedCoin
-    @State private var engraving: String = ""
     @State private var showEngravingSheet = false
 
     private var reduceGlow: Bool { profiles.first?.reduceAmberGlow ?? false }
@@ -66,20 +65,21 @@ struct CoinDetailView: View {
             }
         }
         .presentationDragIndicator(.hidden)
-        .onAppear { engraving = coin.engraving ?? "" }
-        .onDisappear { save() }
         .sheet(isPresented: $showEngravingSheet) {
-            EngravingEditorSheet(engraving: $engraving, onDone: save)
-                .presentationDetents([.height(280)])
-                .presentationDragIndicator(.visible)
-                .presentationBackground(Color.utBackground)
+            EngravingEditorSheet(
+                initial: coin.engraving ?? "",
+                onCommit: commit
+            )
+            .presentationDetents([.height(280)])
+            .presentationDragIndicator(.visible)
+            .presentationBackground(Color.utBackground)
         }
     }
 
     @ViewBuilder
     private var engravingRow: some View {
-        let trimmed = engraving.trimmingCharacters(in: .whitespacesAndNewlines)
-        if trimmed.isEmpty {
+        let persisted = (coin.engraving ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        if persisted.isEmpty {
             Button {
                 HapticsService.selection()
                 showEngravingSheet = true
@@ -92,11 +92,24 @@ struct CoinDetailView: View {
             }
             .buttonStyle(.plain)
         } else {
-            Text("\u{201C}\(trimmed)\u{201D}")
-                .font(.utBody.italic())
-                .foregroundStyle(Color.utTextSecondary)
-                .multilineTextAlignment(.center)
-                .frame(maxWidth: .infinity)
+            Button {
+                HapticsService.selection()
+                showEngravingSheet = true
+            } label: {
+                VStack(spacing: 4) {
+                    Text("\u{201C}\(persisted)\u{201D}")
+                        .font(.utBody.italic())
+                        .foregroundStyle(Color.utTextSecondary)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity)
+                    Text(Copy.CoinEarned.tapToEdit)
+                        .font(.utLabel)
+                        .tracking(1.5)
+                        .foregroundStyle(Color.utTextTertiary)
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
         }
     }
 
@@ -108,16 +121,21 @@ struct CoinDetailView: View {
         coin.earnedDate.formatted(.dateTime.month(.abbreviated).day().year())
     }
 
-    private func save() {
-        let trimmed = engraving.trimmingCharacters(in: .whitespacesAndNewlines)
+    private func commit(_ text: String) {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         coin.engraving = trimmed.isEmpty ? nil : trimmed
         try? modelContext.save()
+        if profiles.first?.coinsBackupEnabled == true, let counter = coin.counter {
+            CoinBackupService.shared.sync(counter)
+        }
     }
 }
 
 struct EngravingEditorSheet: View {
-    @Binding var engraving: String
-    let onDone: () -> Void
+    let initial: String
+    let onCommit: (String) -> Void
+
+    @State private var text: String = ""
     @Environment(\.dismiss) private var dismiss
     @FocusState private var focused: Bool
 
@@ -127,7 +145,7 @@ struct EngravingEditorSheet: View {
                 LabelText(text: Copy.CoinEarned.engravingPrompt)
                 Spacer()
                 Button {
-                    onDone()
+                    onCommit(text)
                     dismiss()
                 } label: {
                     Text(Copy.CoinEarned.doneButton)
@@ -136,7 +154,7 @@ struct EngravingEditorSheet: View {
                 }
             }
 
-            TextField(Copy.CoinEarned.engravingPlaceholder, text: $engraving, axis: .vertical)
+            TextField(Copy.CoinEarned.engravingPlaceholder, text: $text, axis: .vertical)
                 .font(.utBody.italic())
                 .foregroundStyle(Color.utTextPrimary)
                 .lineLimit(3, reservesSpace: true)
@@ -148,7 +166,7 @@ struct EngravingEditorSheet: View {
                 .focused($focused)
                 .submitLabel(.done)
                 .onSubmit {
-                    onDone()
+                    onCommit(text)
                     dismiss()
                 }
 
@@ -158,6 +176,9 @@ struct EngravingEditorSheet: View {
         .padding(.top, 20)
         .padding(.bottom, 16)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .onAppear { focused = true }
+        .onAppear {
+            text = initial
+            focused = true
+        }
     }
 }
