@@ -8,11 +8,14 @@ struct NameItView: View {
     @State private var name: String = ""
     @State private var startMode: StartMode = .now
     @State private var pastDate: Date = Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date()
+    @State private var showSettings = false
 
     enum StartMode: Hashable { case now, past }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 28) {
+            topBar
+
             VStack(alignment: .leading, spacing: 14) {
                 LabelText(text: Copy.NameIt.prompt)
                 TextField(Copy.NameIt.placeholder, text: $name)
@@ -61,6 +64,24 @@ struct NameItView: View {
         .padding(.vertical, 22)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .background(Color.utBackground.ignoresSafeArea())
+        .sheet(isPresented: $showSettings) { SettingsSheet() }
+    }
+
+    private var topBar: some View {
+        HStack {
+            Spacer()
+            Button {
+                HapticsService.selection()
+                showSettings = true
+            } label: {
+                Image(systemName: "gearshape")
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundStyle(Color.utTextSecondary)
+                    .frame(width: 28, height: 28)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+        }
     }
 
     private var privacyNote: some View {

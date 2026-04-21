@@ -8,6 +8,11 @@ final class StoreService {
 
     static let shared = StoreService()
 
+    enum RestoreOutcome {
+        case unlocked
+        case nothingFound
+    }
+
     private(set) var product: Product?
     private(set) var isPremiumUnlocked: Bool = false
     private(set) var isPurchasing: Bool = false
@@ -58,9 +63,11 @@ final class StoreService {
         }
     }
 
-    func restore() async throws {
+    @discardableResult
+    func restore() async throws -> RestoreOutcome {
         try await AppStore.sync()
         await refreshEntitlement()
+        return isPremiumUnlocked ? .unlocked : .nothingFound
     }
 
     private func handle(_ result: VerificationResult<Transaction>) async {

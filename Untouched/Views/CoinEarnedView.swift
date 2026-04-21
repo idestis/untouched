@@ -121,6 +121,9 @@ struct CoinEarnedView: View {
         let trimmed = engraving.trimmingCharacters(in: .whitespacesAndNewlines)
         coin.engraving = trimmed.isEmpty ? nil : trimmed
         try? modelContext.save()
+        if profiles.first?.coinsBackupEnabled == true, let counter = coin.counter {
+            CoinBackupService.shared.sync(counter)
+        }
         dismiss()
     }
 

@@ -11,6 +11,8 @@ final class UserProfile {
     var notificationsEnabled: Bool
     var hapticsEnabled: Bool
     var reduceAmberGlow: Bool
+    /// User has opted in to encrypted iCloud backup of earned coins. Off by default.
+    var coinsBackupEnabled: Bool = false
 
     init(
         id: UUID = UUID(),
@@ -20,7 +22,8 @@ final class UserProfile {
         dailyCheckInMinute: Int? = nil,
         notificationsEnabled: Bool = false,
         hapticsEnabled: Bool = true,
-        reduceAmberGlow: Bool = false
+        reduceAmberGlow: Bool = false,
+        coinsBackupEnabled: Bool = false
     ) {
         self.id = id
         self.hasCompletedOnboarding = hasCompletedOnboarding
@@ -30,6 +33,7 @@ final class UserProfile {
         self.notificationsEnabled = notificationsEnabled
         self.hapticsEnabled = hapticsEnabled
         self.reduceAmberGlow = reduceAmberGlow
+        self.coinsBackupEnabled = coinsBackupEnabled
     }
 
     var dailyCheckInTime: DateComponents? {

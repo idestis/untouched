@@ -4,6 +4,7 @@ import SwiftData
 struct ResetView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Query private var profiles: [UserProfile]
 
     let counter: Counter
     @State private var confession: String = ""
@@ -126,6 +127,9 @@ struct ResetView: View {
 
         HapticsService.heavy()
         WidgetTimelineService.reloadAll()
+        if profiles.first?.coinsBackupEnabled == true {
+            CoinBackupService.shared.sync(counter)
+        }
         dismiss()
     }
 }

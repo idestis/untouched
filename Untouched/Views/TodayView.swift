@@ -3,6 +3,7 @@ import SwiftData
 
 struct TodayView: View {
     @Environment(\.modelContext) private var modelContext
+    @Query private var profiles: [UserProfile]
     @Query(filter: #Predicate<Counter> { !$0.isArchived }, sort: \Counter.createdDate)
     private var activeCounters: [Counter]
 
@@ -121,12 +122,17 @@ struct TodayView: View {
             Spacer()
             Chip(text: "\(Copy.Today.since) \(formattedStart(counter.startDate))")
                 .contentShape(Rectangle())
-            Button { showSettings = true } label: {
-                Image(systemName: "ellipsis")
+            Button {
+                HapticsService.selection()
+                showSettings = true
+            } label: {
+                Image(systemName: "gearshape")
                     .font(.system(size: 16, weight: .medium))
                     .foregroundStyle(Color.utTextSecondary)
                     .frame(width: 28, height: 28)
+                    .contentShape(Rectangle())
             }
+            .buttonStyle(.plain)
             .padding(.leading, 4)
         }
     }
@@ -171,6 +177,9 @@ struct TodayView: View {
 
         HapticsService.coinEarned()
         WidgetTimelineService.reloadAll()
+        if profiles.first?.coinsBackupEnabled == true {
+            CoinBackupService.shared.sync(counter)
+        }
         pendingCoin = coin
     }
 }
