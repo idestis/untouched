@@ -75,6 +75,7 @@ struct CoinEarnedView: View {
             }
         }
         .onAppear {
+            SoundService.coinEarned()
             withAnimation(Motion.utCoinEnter) { stroke = 1 }
         }
         .sheet(isPresented: $showEngravingSheet) {

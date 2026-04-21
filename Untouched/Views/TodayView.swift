@@ -32,7 +32,9 @@ struct TodayView: View {
         .fullScreenCover(isPresented: $showReset) {
             if let counter { ResetView(counter: counter) }
         }
-        .fullScreenCover(item: $pendingCoin) { coin in
+        .fullScreenCover(item: $pendingCoin, onDismiss: {
+            Task { await checkForCoins() }
+        }) { coin in
             CoinEarnedView(coin: coin)
         }
         .task(id: counter?.id) {
