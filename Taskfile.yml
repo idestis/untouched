@@ -1,0 +1,185 @@
+version: '3'
+
+# Release automation for Untouched.
+# One-command publish:  task release -- 0.2.0
+# (see `task --list` for the pieces)
+
+vars:
+  PROJECT: Untouched.xcodeproj
+  SCHEME: Untouched
+  PBXPROJ: Untouched.xcodeproj/project.pbxproj
+  ARCHIVE_PATH: build/Untouched.xcarchive
+  EXPORT_PATH: build/export
+  EXPORT_OPTIONS: ExportOptions.plist
+  IPA_PATH: build/export/Untouched.ipa
+
+tasks:
+  default:
+    desc: List available tasks.
+    cmds:
+      - task --list-all
+    silent: true
+
+  # ───── version ──────────────────────────────────────────────────────────
+
+  bump:
+    desc: 'Bump marketing version (auto from commits) and build. Usage: task bump or task bump -- 0.2.0'
+    vars:
+      VERSION:
+        sh: |
+          if [ -n "{{.CLI_ARGS}}" ]; then
+            printf '%s' "{{.CLI_ARGS}}"
+          else
+            git cliff --bumped-version 2>/dev/null | sed 's/^v//'
+          fi
+    preconditions:
+      - sh: printf '%s' "{{.VERSION}}" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'
+        msg: 'Could not determine next version from commits. Pass one explicitly: task bump -- <semver>.'
+    cmds:
+      - |
+        set -e
+        CURRENT_BUILD=$(grep -m1 'CURRENT_PROJECT_VERSION = ' {{.PBXPROJ}} | sed -E 's/.*= ([0-9]+).*/\1/')
+        NEXT_BUILD=$((CURRENT_BUILD + 1))
+        sed -i '' "s/MARKETING_VERSION = [0-9.]*;/MARKETING_VERSION = {{.VERSION}};/g" {{.PBXPROJ}}
+        sed -i '' "s/CURRENT_PROJECT_VERSION = [0-9]*;/CURRENT_PROJECT_VERSION = $NEXT_BUILD;/g" {{.PBXPROJ}}
+        echo "Bumped MARKETING_VERSION={{.VERSION}} CURRENT_PROJECT_VERSION=$NEXT_BUILD"
+
+  bump:preview:
+    desc: Print the next version that git-cliff would pick from recent commits.
+    cmds:
+      - |
+        NEXT=$(git cliff --bumped-version 2>/dev/null | sed 's/^v//')
+        CURRENT=$(grep -m1 'MARKETING_VERSION = ' {{.PBXPROJ}} | sed -E 's/.*= ([0-9.]+).*/\1/')
+        echo "current:  $CURRENT"
+        echo "next:     ${NEXT:-<none — no releasable commits since last tag>}"
+    silent: true
+
+  version:
+    desc: Print current marketing and build numbers.
+    cmds:
+      - |
+        MV=$(grep -m1 'MARKETING_VERSION = ' {{.PBXPROJ}} | sed -E 's/.*= ([0-9.]+).*/\1/')
+        CV=$(grep -m1 'CURRENT_PROJECT_VERSION = ' {{.PBXPROJ}} | sed -E 's/.*= ([0-9]+).*/\1/')
+        echo "MARKETING_VERSION=$MV"
+        echo "CURRENT_PROJECT_VERSION=$CV"
+    silent: true
+
+  # ───── changelog ────────────────────────────────────────────────────────
+
+  changelog:
+    desc: Regenerate CHANGELOG.md from git history.
+    cmds:
+      - git cliff -o CHANGELOG.md
+
+  changelog:preview:
+    desc: Preview what the next release section will look like.
+    cmds:
+      - git cliff --unreleased --strip all
+
+  # ───── build ────────────────────────────────────────────────────────────
+
+  archive:
+    desc: Archive a Release build to build/Untouched.xcarchive.
+    cmds:
+      - mkdir -p build
+      - |
+        xcodebuild -project {{.PROJECT}} \
+          -scheme {{.SCHEME}} \
+          -configuration Release \
+          -destination 'generic/platform=iOS' \
+          -archivePath {{.ARCHIVE_PATH}} \
+          -allowProvisioningUpdates \
+          archive
+
+  export:
+    desc: Export signed ipa from archive.
+    deps: [archive]
+    preconditions:
+      - sh: test -f {{.EXPORT_OPTIONS}}
+        msg: '{{.EXPORT_OPTIONS}} missing.'
+    cmds:
+      - |
+        xcodebuild -exportArchive \
+          -archivePath {{.ARCHIVE_PATH}} \
+          -exportOptionsPlist {{.EXPORT_OPTIONS}} \
+          -exportPath {{.EXPORT_PATH}} \
+          -allowProvisioningUpdates
+
+  upload:
+    desc: 'Archive + export + upload to App Store Connect. Requires $ASC_KEY_ID and $ASC_ISSUER_ID.'
+    deps: [export]
+    preconditions:
+      - sh: test -n "$ASC_KEY_ID"
+        msg: 'Set $ASC_KEY_ID (App Store Connect API key id).'
+      - sh: test -n "$ASC_ISSUER_ID"
+        msg: 'Set $ASC_ISSUER_ID (App Store Connect issuer id).'
+    cmds:
+      - |
+        xcrun altool --upload-app \
+          --type ios \
+          --file {{.IPA_PATH}} \
+          --apiKey "$ASC_KEY_ID" \
+          --apiIssuer "$ASC_ISSUER_ID"
+
+  clean:
+    desc: Remove the build directory.
+    cmds:
+      - rm -rf build
+
+  # ───── release ──────────────────────────────────────────────────────────
+
+  release:
+    desc: 'Full publish: bump, changelog, tag, archive, upload, push, GH release. Usage: task release (auto) or task release -- 0.2.0'
+    vars:
+      VERSION:
+        sh: |
+          if [ -n "{{.CLI_ARGS}}" ]; then
+            printf '%s' "{{.CLI_ARGS}}"
+          else
+            git cliff --bumped-version 2>/dev/null | sed 's/^v//'
+          fi
+    preconditions:
+      - sh: printf '%s' "{{.VERSION}}" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'
+        msg: 'Could not determine next version. Either add Conventional Commits since the last tag or pass one: task release -- <semver>.'
+      - sh: test -z "$(git status --porcelain)"
+        msg: 'Working tree not clean. Commit or stash first.'
+      - sh: test "$(git rev-parse --abbrev-ref HEAD)" = 'main'
+        msg: 'Must be on main branch.'
+      - sh: |
+          git fetch --quiet origin main
+          test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
+        msg: 'Local main is out of sync with origin/main. Pull/push first.'
+      - sh: '! git rev-parse v{{.VERSION}} >/dev/null 2>&1'
+        msg: 'Tag v{{.VERSION}} already exists.'
+      - sh: test -n "$ASC_KEY_ID" && test -n "$ASC_ISSUER_ID"
+        msg: 'Set $ASC_KEY_ID and $ASC_ISSUER_ID before releasing.'
+      - sh: gh auth status >/dev/null 2>&1
+        msg: 'Run `gh auth login` first.'
+    cmds:
+      - task: bump
+        vars: { CLI_ARGS: '{{.VERSION}}' }
+      - git cliff --tag v{{.VERSION}} -o CHANGELOG.md
+      - git add {{.PBXPROJ}} CHANGELOG.md
+      - 'git commit -m "chore(release): v{{.VERSION}}"'
+      - git tag -a v{{.VERSION}} -m "v{{.VERSION}}"
+      - task: upload
+      - git push origin main
+      - git push origin v{{.VERSION}}
+      - |
+        NOTES=$(git cliff --latest --strip all)
+        gh release create v{{.VERSION}} --title "v{{.VERSION}}" --notes "$NOTES"
+
+  release:notes:
+    desc: 'Rebuild the GH release notes for an existing tag. Usage: task release:notes -- 0.2.0'
+    vars:
+      VERSION: '{{.CLI_ARGS}}'
+    preconditions:
+      - sh: printf '%s' "{{.VERSION}}" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'
+        msg: 'Usage: task release:notes -- <semver>'
+      - sh: git rev-parse v{{.VERSION}} >/dev/null 2>&1
+        msg: 'Tag v{{.VERSION}} not found.'
+    cmds:
+      - |
+        NOTES=$(git cliff --current --strip all)
+        gh release edit v{{.VERSION}} --notes "$NOTES" 2>/dev/null \
+          || gh release create v{{.VERSION}} --title "v{{.VERSION}}" --notes "$NOTES"

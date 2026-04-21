@@ -1,0 +1,279 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ut-bg: #000000;
+  --color-ut-bg-cream: #f7f3ea;
+  --color-ut-surface: rgba(255, 255, 255, 0.04);
+  --color-ut-border: rgba(255, 255, 255, 0.08);
+  --color-ut-text: #ffffff;
+  --color-ut-text-dim: rgba(255, 255, 255, 0.55);
+  --color-ut-text-faint: rgba(255, 255, 255, 0.35);
+  --color-ut-amber: #ef9f27;
+  --color-ut-amber-dim: #b8782f;
+  --color-ut-amber-soft: rgba(239, 159, 39, 0.15);
+  --color-ut-amber-glow: rgba(239, 159, 39, 0.25);
+  --color-ut-danger: #e24b4a;
+
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+    "Helvetica Neue", Helvetica, Arial, system-ui, sans-serif;
+
+  --radius-bento: 16px;
+  --radius-chip: 12px;
+
+  --tracking-label: 2px;
+  --tracking-mega: -6px;
+  --tracking-name: -1.5px;
+  --tracking-h1: -1.2px;
+}
+
+html,
+body {
+  background-color: var(--color-ut-bg);
+  color: var(--color-ut-text);
+  font-family: var(--font-sans);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "ss01", "cv11";
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  html {
+    scroll-snap-type: y mandatory;
+  }
+
+  section[data-snap] {
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;
+  }
+
+  footer {
+    scroll-snap-align: end;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+    scroll-snap-type: none;
+  }
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: var(--color-ut-amber);
+  color: #000;
+}
+
+.hairline {
+  border: 0.5px solid var(--color-ut-border);
+}
+
+.grain::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+@keyframes utFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.fade-up {
+  animation: utFadeUp 0.8s ease both;
+}
+.fade-up-delay-1 {
+  animation-delay: 0.12s;
+}
+.fade-up-delay-2 {
+  animation-delay: 0.24s;
+}
+.fade-up-delay-3 {
+  animation-delay: 0.36s;
+}
+
+/* Phone frame — shared with Unbroken visual */
+.phone-frame {
+  background: #0a0a0a;
+  border-radius: 44px;
+  padding: 10px;
+  border: 0.5px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 40px 120px -20px rgba(239, 159, 39, 0.08),
+    0 10px 40px -10px rgba(0, 0, 0, 0.6),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+.phone-frame-light {
+  background: #f2f2f2;
+  border-radius: 44px;
+  padding: 10px;
+  border: 0.5px solid rgba(0, 0, 0, 0.12);
+  box-shadow:
+    0 40px 120px -20px rgba(239, 159, 39, 0.08),
+    0 10px 40px -10px rgba(0, 0, 0, 0.6);
+}
+
+.phone-screen {
+  border-radius: 34px;
+  aspect-ratio: 9 / 19.5;
+  overflow: hidden;
+  display: block;
+  width: 100%;
+  object-fit: cover;
+}
+
+/* Coin rings — signature motif for Untouched.
+   Earned: amber border + soft amber fill + amber glow.
+   Locked: dashed white border, no fill. */
+.coin-ring {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-ut-amber);
+  background: var(--color-ut-amber-soft);
+  box-shadow:
+    0 0 40px var(--color-ut-amber-glow),
+    inset 0 0 20px rgba(239, 159, 39, 0.08);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-ut-amber);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.coin-ring-lg {
+  width: 156px;
+  height: 156px;
+  font-size: 44px;
+  letter-spacing: -1px;
+}
+
+.coin-ring-md {
+  width: 96px;
+  height: 96px;
+  font-size: 24px;
+  letter-spacing: -0.5px;
+}
+
+.coin-ring-sm {
+  width: 56px;
+  height: 56px;
+  font-size: 16px;
+}
+
+.coin-ring-locked {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  background: transparent;
+  box-shadow: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-ut-text-faint);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.coin-ring-locked.coin-ring-md {
+  width: 96px;
+  height: 96px;
+  font-size: 18px;
+}
+
+.coin-ring-locked.coin-ring-sm {
+  width: 56px;
+  height: 56px;
+  font-size: 13px;
+}
+
+/* Radial amber glow — used behind coin-earned hero sections */
+.amber-halo {
+  position: absolute;
+  pointer-events: none;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(239, 159, 39, 0.28) 0%,
+    rgba(239, 159, 39, 0) 60%
+  );
+  filter: blur(30px);
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal.in {
+  opacity: 1;
+  transform: none;
+}
+
+.scroll-row {
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.scroll-row::-webkit-scrollbar {
+  display: none;
+}
+.scroll-row > * {
+  scroll-snap-align: center;
+}
+
+/* Widget mockups — lock screen + home screen */
+.widget-mock {
+  background: #0a0a0a;
+  border-radius: 22px;
+  border: 0.5px solid rgba(255, 255, 255, 0.08);
+  padding: 14px 18px;
+  font-variant-numeric: tabular-nums;
+}
+
+.widget-mock-inline {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 6px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+  backdrop-filter: blur(20px);
+}

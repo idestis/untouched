@@ -1,0 +1,5 @@
+name = "untouched"
+compatibility_date = "2026-04-21"
+
+[assets]
+directory = "./dist"

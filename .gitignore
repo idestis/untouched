@@ -1,0 +1,43 @@
+## macOS
+.DS_Store
+
+## Xcode
+xcuserdata/
+*.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+*.xccheckout
+
+## Build artifacts
+build/
+DerivedData/
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+## Taskfile
+.task/
+
+## Swift Package Manager
+.build/
+.swiftpm/
+Package.resolved
+
+## Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+## CocoaPods (not used, but just in case)
+Pods/
+
+## Carthage (not used)
+Carthage/Build/
+
+## Playwright MCP
+.playwright-mcp/
+
+## Node / landing
+landing/node_modules/
+landing/dist/
+landing/.wrangler/

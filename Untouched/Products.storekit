@@ -1,0 +1,33 @@
+{
+  "identifier" : "untouched",
+  "nonRenewingSubscriptions" : [],
+  "products" : [
+    {
+      "displayPrice" : "4.99",
+      "familyShareable" : true,
+      "internalID" : "lifetime",
+      "localizations" : [
+        {
+          "description" : "Unlock up to three counters, forever. One payment, no renewal.",
+          "displayName" : "Untouched — Lifetime",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.getuntouched.lifetime",
+      "referenceName" : "Lifetime Unlock",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_askToBuyEnabled" : false,
+    "_storefront" : {
+      "_countryCode" : "USA",
+      "_storefrontType" : "SQ"
+    }
+  },
+  "subscriptionGroups" : [],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}

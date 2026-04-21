@@ -1,0 +1,401 @@
+<div style="padding: 1rem 0;">
+  <h2 class="sr-only">Untouched app mockup in dark mode with seven screens: manifesto, naming the thing, today with days-since counter, coin-earned moment, coin shelf, reset confirmation, and lock-screen widget preview.</h2>
+
+  <style>
+    .phone { background: #0a0a0a; border-radius: 36px; padding: 14px; border: 0.5px solid rgba(255,255,255,0.08); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03); }
+    .screen { background: #000; border-radius: 24px; padding: 22px 18px; min-height: 560px; display: flex; flex-direction: column; color: #fff; position: relative; overflow: hidden; }
+    .notch { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .time { font-size: 12px; font-weight: 500; color: #fff; letter-spacing: -0.2px; }
+    .dots { display: flex; gap: 3px; }
+    .dot { width: 3px; height: 3px; border-radius: 50%; background: rgba(255,255,255,0.5); }
+    .label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.4); font-weight: 500; }
+    .mega { font-size: 120px; font-weight: 500; line-height: 0.9; letter-spacing: -6px; color: #fff; }
+    .bento { background: rgba(255,255,255,0.04); border-radius: 16px; padding: 14px; border: 0.5px solid rgba(255,255,255,0.06); }
+    .btn-primary { background: #fff; color: #000; text-align: center; padding: 16px; border-radius: 100px; font-size: 14px; font-weight: 500; letter-spacing: -0.2px; }
+    .btn-ghost { background: transparent; color: rgba(255,255,255,0.5); text-align: center; padding: 12px; font-size: 12px; font-weight: 500; }
+    .btn-danger { background: transparent; color: #E24B4A; text-align: center; padding: 14px; border-radius: 100px; font-size: 14px; font-weight: 500; border: 0.5px solid rgba(226,75,74,0.4); }
+    .accent { color: #EF9F27; }
+    .chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 100px; border: 0.5px solid rgba(255,255,255,0.12); font-size: 10px; color: rgba(255,255,255,0.7); font-weight: 500; letter-spacing: 0.3px; }
+    .screen-title { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(0,0,0,0.55); text-align: center; margin-bottom: 10px; font-weight: 500; }
+    .coin-ring { border: 1.5px solid #EF9F27; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-direction: column; background: rgba(239,159,39,0.04); }
+    .coin-ring-locked { border: 1px dashed rgba(255,255,255,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-direction: column; background: transparent; }
+  </style>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; max-width: 1400px;">
+
+    <!-- SCREEN 1: MANIFESTO -->
+    <div>
+      <div class="screen-title">01 · Manifesto</div>
+      <div class="phone">
+        <div class="screen">
+          <div class="notch">
+            <div class="time">9:41</div>
+            <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+          </div>
+
+          <div style="margin-top: 48px;">
+            <div style="font-size: 10px; letter-spacing: 4px; color: rgba(255,255,255,0.35); font-weight: 500; margin-bottom: 40px;">UNTOUCHED</div>
+
+            <div style="font-size: 34px; font-weight: 500; line-height: 1.05; letter-spacing: -1.2px; margin-bottom: 32px;">
+              Name one thing.<br>
+              Step away from it.<br>
+              <span style="color: rgba(255,255,255,0.35);">Start over if you slip.</span>
+            </div>
+
+            <div style="font-size: 14px; color: rgba(255,255,255,0.55); line-height: 1.6; max-width: 280px;">
+              We won't check.<br>You will.<br>The count is just for you.
+            </div>
+          </div>
+
+          <div style="margin-top: auto;">
+            <div class="btn-primary">I understand</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 2: NAME IT -->
+    <div>
+      <div class="screen-title">02 · Name it</div>
+      <div class="phone">
+        <div class="screen">
+          <div class="notch">
+            <div class="time">9:41</div>
+            <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+          </div>
+
+          <div style="margin-top: 32px;">
+            <div class="label" style="margin-bottom: 14px;">What are you stepping away from?</div>
+            <div style="font-size: 40px; font-weight: 500; letter-spacing: -1.5px; line-height: 1;">Cigarettes.</div>
+            <div style="display: flex; align-items: center; gap: 6px; margin-top: 14px;">
+              <div style="width: 6px; height: 6px; border-radius: 50%; background: #EF9F27;"></div>
+              <div style="font-size: 13px; color: rgba(255,255,255,0.45);">Private. Stays on this device.</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 28px;">
+            <div class="label" style="margin-bottom: 12px;">Starting from</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <div style="background: #fff; color: #000; padding: 18px 14px; border-radius: 14px;">
+                <div style="font-size: 20px; font-weight: 500; letter-spacing: -0.6px;">Right now</div>
+                <div style="font-size: 11px; color: rgba(0,0,0,0.5); margin-top: 2px;">Day 0</div>
+              </div>
+              <div style="background: rgba(255,255,255,0.04); padding: 18px 14px; border-radius: 14px; border: 0.5px solid rgba(255,255,255,0.08);">
+                <div style="font-size: 20px; font-weight: 500; letter-spacing: -0.6px; color: rgba(255,255,255,0.6);">A past date</div>
+                <div style="font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 2px;">Backfill</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: 24px;">
+            <div class="label" style="margin-bottom: 12px;">Milestones</div>
+            <div style="padding: 14px 16px; background: rgba(255,255,255,0.03); border-radius: 12px; border: 0.5px solid rgba(255,255,255,0.06);">
+              <div style="display: flex; flex-wrap: wrap; gap: 6px; font-size: 11px; color: rgba(255,255,255,0.65);">
+                <span>24h</span><span style="color: rgba(255,255,255,0.2);">·</span>
+                <span>7d</span><span style="color: rgba(255,255,255,0.2);">·</span>
+                <span>30d</span><span style="color: rgba(255,255,255,0.2);">·</span>
+                <span>60d</span><span style="color: rgba(255,255,255,0.2);">·</span>
+                <span>90d</span><span style="color: rgba(255,255,255,0.2);">·</span>
+                <span>6mo</span><span style="color: rgba(255,255,255,0.2);">·</span>
+                <span>9mo</span><span style="color: rgba(255,255,255,0.2);">·</span>
+                <span>1yr</span><span style="color: rgba(255,255,255,0.2);">·</span>
+                <span style="color: rgba(255,255,255,0.35);">every year after</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: auto; padding-top: 20px;">
+            <div class="btn-primary">Begin</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 3: TODAY -->
+    <div>
+      <div class="screen-title">03 · Today</div>
+      <div class="phone">
+        <div class="screen">
+          <div class="notch">
+            <div class="time">9:41</div>
+            <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; margin-bottom: 12px;">
+            <span class="chip"><span style="width: 5px; height: 5px; border-radius: 50%; background: #EF9F27; display: inline-block;"></span>Cigarettes</span>
+            <span class="chip" style="color: rgba(255,255,255,0.5);">Since May 3</span>
+          </div>
+
+          <div style="text-align: center; padding: 36px 0 20px;">
+            <div class="label" style="margin-bottom: 14px;">Days untouched</div>
+            <div class="mega">47</div>
+          </div>
+
+          <!-- Progress toward next coin -->
+          <div style="padding: 0 4px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+              <div style="font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 1px; text-transform: uppercase;">Last coin · 30d</div>
+              <div style="font-size: 10px; color: rgba(239,159,39,0.9); letter-spacing: 1px; text-transform: uppercase;">Next · 60d</div>
+            </div>
+            <div style="display: flex; gap: 3px;">
+              <div style="flex: 1; height: 3px; background: #EF9F27; border-radius: 2px;"></div>
+              <div style="flex: 1; height: 3px; background: #EF9F27; border-radius: 2px;"></div>
+              <div style="flex: 1; height: 3px; background: #EF9F27; border-radius: 2px;"></div>
+              <div style="flex: 1; height: 3px; background: #EF9F27; border-radius: 2px;"></div>
+              <div style="flex: 1; height: 3px; background: #EF9F27; border-radius: 2px;"></div>
+              <div style="flex: 1; height: 3px; background: #EF9F27; border-radius: 2px;"></div>
+              <div style="flex: 1; height: 3px; background: rgba(239,159,39,0.8); border-radius: 2px;"></div>
+              <div style="flex: 1; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px;"></div>
+              <div style="flex: 1; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px;"></div>
+              <div style="flex: 1; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px;"></div>
+            </div>
+            <div style="font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 10px; text-align: center;">13 days until the next one.</div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;">
+            <div class="bento">
+              <div class="label" style="margin-bottom: 8px;">Coins earned</div>
+              <div style="font-size: 24px; font-weight: 500; letter-spacing: -0.8px;">3 <span style="font-size: 12px; color: rgba(255,255,255,0.4); font-weight: 400;">of 9</span></div>
+            </div>
+            <div class="bento">
+              <div class="label" style="margin-bottom: 8px;">Longest</div>
+              <div style="font-size: 24px; font-weight: 500; letter-spacing: -0.8px;">47 <span style="font-size: 12px; color: rgba(255,255,255,0.4); font-weight: 400;">days</span></div>
+            </div>
+          </div>
+
+          <div style="margin-top: auto; display: flex; gap: 8px; padding-top: 10px;">
+            <div style="flex: 2;" class="btn-primary">Open shelf</div>
+            <div style="flex: 1; padding: 16px; text-align: center; border-radius: 100px; border: 0.5px solid rgba(255,255,255,0.12); font-size: 13px; color: rgba(255,255,255,0.55);">Reset</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 4: COIN EARNED -->
+    <div>
+      <div class="screen-title">04 · Coin earned</div>
+      <div class="phone">
+        <div class="screen" style="background: radial-gradient(circle at 50% 35%, rgba(239,159,39,0.10) 0%, #000 65%);">
+          <div class="notch">
+            <div class="time">9:41</div>
+            <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+          </div>
+
+          <div style="text-align: center; margin-top: 36px;">
+            <div class="label" style="margin-bottom: 18px; color: rgba(239,159,39,0.8);">Milestone held</div>
+            <div style="font-size: 48px; font-weight: 500; line-height: 0.95; letter-spacing: -1.8px;">
+              Thirty days.
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: center; margin: 36px 0 24px;">
+            <div class="coin-ring" style="width: 156px; height: 156px; box-shadow: 0 0 60px rgba(239,159,39,0.2);">
+              <div style="font-size: 44px; font-weight: 500; line-height: 1; letter-spacing: -2px; color: #EF9F27;">30</div>
+              <div style="font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(239,159,39,0.8); margin-top: 4px;">Days</div>
+            </div>
+          </div>
+
+          <div style="text-align: center; padding: 0 16px;">
+            <div style="font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.55; font-style: italic;">
+              "For my kids."
+            </div>
+            <div style="font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 6px;">Engraved · tap to edit</div>
+          </div>
+
+          <div style="margin-top: auto; padding-top: 20px;">
+            <div class="btn-primary">Keep it</div>
+            <div class="btn-ghost">Share (private card)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 5: SHELF -->
+    <div>
+      <div class="screen-title">05 · Shelf</div>
+      <div class="phone">
+        <div class="screen">
+          <div class="notch">
+            <div class="time">9:41</div>
+            <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+          </div>
+
+          <div style="margin-top: 24px; margin-bottom: 18px;">
+            <div class="label" style="margin-bottom: 10px;">Shelf</div>
+            <div style="font-size: 34px; font-weight: 500; letter-spacing: -1.2px; line-height: 1;">Cigarettes.</div>
+            <div style="font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 6px;">3 earned · 6 ahead</div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+            <!-- Earned coins -->
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+              <div class="coin-ring" style="width: 72px; height: 72px;">
+                <div style="font-size: 18px; font-weight: 500; letter-spacing: -0.5px; color: #EF9F27;">24h</div>
+              </div>
+              <div style="font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.45);">May 4</div>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+              <div class="coin-ring" style="width: 72px; height: 72px;">
+                <div style="font-size: 18px; font-weight: 500; letter-spacing: -0.5px; color: #EF9F27;">7d</div>
+              </div>
+              <div style="font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.45);">May 10</div>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+              <div class="coin-ring" style="width: 72px; height: 72px;">
+                <div style="font-size: 18px; font-weight: 500; letter-spacing: -0.5px; color: #EF9F27;">30d</div>
+              </div>
+              <div style="font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.45);">Jun 2</div>
+            </div>
+            <!-- Locked coins -->
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+              <div class="coin-ring-locked" style="width: 72px; height: 72px;">
+                <div style="font-size: 18px; font-weight: 500; letter-spacing: -0.5px; color: rgba(255,255,255,0.2);">60d</div>
+              </div>
+              <div style="font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.25);">13 to go</div>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+              <div class="coin-ring-locked" style="width: 72px; height: 72px;">
+                <div style="font-size: 18px; font-weight: 500; letter-spacing: -0.5px; color: rgba(255,255,255,0.15);">90d</div>
+              </div>
+              <div style="font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.25);">—</div>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+              <div class="coin-ring-locked" style="width: 72px; height: 72px;">
+                <div style="font-size: 16px; font-weight: 500; letter-spacing: -0.5px; color: rgba(255,255,255,0.15);">6mo</div>
+              </div>
+              <div style="font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.25);">—</div>
+            </div>
+          </div>
+
+          <div class="bento" style="padding: 12px 14px; margin-top: 4px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div class="label" style="margin-bottom: 4px;">Previous runs</div>
+                <div style="font-size: 13px; font-weight: 500;">2 attempts · longest 19d</div>
+              </div>
+              <div style="font-size: 11px; color: rgba(255,255,255,0.4);">›</div>
+            </div>
+          </div>
+
+          <div style="margin-top: auto; padding-top: 12px;">
+            <div class="btn-ghost">Back to today</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 6: RESET -->
+    <div>
+      <div class="screen-title">06 · Reset</div>
+      <div class="phone">
+        <div class="screen">
+          <div class="notch">
+            <div class="time">9:41</div>
+            <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+          </div>
+
+          <div style="margin-top: 44px; margin-bottom: 20px;">
+            <div class="label" style="margin-bottom: 14px; color: rgba(226,75,74,0.65);">Reset the count</div>
+            <div style="font-size: 40px; font-weight: 500; line-height: 1; letter-spacing: -1.6px;">
+              Tell the truth.
+            </div>
+            <div style="font-size: 14px; color: rgba(255,255,255,0.5); margin-top: 14px; line-height: 1.55;">
+              Type what happened. One sentence. Only you will read it. The coins you earned stay earned.
+            </div>
+          </div>
+
+          <div style="padding: 16px; background: rgba(255,255,255,0.03); border-radius: 14px; border: 0.5px solid rgba(255,255,255,0.08); min-height: 92px;">
+            <div style="font-size: 15px; color: #fff; line-height: 1.5;">I had one after dinner.</div>
+            <div style="font-size: 10px; color: rgba(255,255,255,0.3); margin-top: 10px; letter-spacing: 1px; text-transform: uppercase;">23 characters</div>
+          </div>
+
+          <div style="margin-top: 16px; padding: 14px 16px; background: rgba(239,159,39,0.06); border-radius: 12px; border: 0.5px solid rgba(239,159,39,0.2);">
+            <div style="display: flex; gap: 10px; align-items: flex-start;">
+              <div style="color: #EF9F27; font-size: 14px; line-height: 1.4;">›</div>
+              <div style="font-size: 12px; color: rgba(255,255,255,0.65); line-height: 1.5;">
+                You kept 47 days. That happened. The 3 coins on your shelf are yours to keep.
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: auto; padding-top: 18px;">
+            <div class="btn-danger">Reset to day 0</div>
+            <div class="btn-ghost">Never mind</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 7: LOCK SCREEN / WIDGET -->
+    <div>
+      <div class="screen-title">07 · Widget</div>
+      <div class="phone">
+        <div class="screen" style="background: linear-gradient(180deg, #000 0%, #0a0a0a 100%); padding: 22px 18px;">
+          <div class="notch">
+            <div class="time">9:41</div>
+            <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+          </div>
+
+          <!-- Lock screen mockup vibe -->
+          <div style="text-align: center; margin-top: 18px;">
+            <div style="font-size: 13px; color: rgba(255,255,255,0.5); letter-spacing: 0.5px;">Tuesday · Jun 16</div>
+            <div style="font-size: 72px; font-weight: 300; letter-spacing: -3px; margin-top: 4px; line-height: 1;">9:41</div>
+          </div>
+
+          <!-- Lock screen widget row -->
+          <div style="display: flex; gap: 8px; margin-top: 20px; padding: 0 4px;">
+            <div style="flex: 1; padding: 10px 12px; background: rgba(255,255,255,0.08); border-radius: 14px; backdrop-filter: blur(20px);">
+              <div style="font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.55); margin-bottom: 4px;">Untouched</div>
+              <div style="display: flex; align-items: baseline; gap: 6px;">
+                <div style="font-size: 28px; font-weight: 500; letter-spacing: -1px; color: #EF9F27;">47</div>
+                <div style="font-size: 11px; color: rgba(255,255,255,0.55);">days</div>
+              </div>
+            </div>
+            <div style="flex: 1; padding: 10px 12px; background: rgba(255,255,255,0.08); border-radius: 14px; backdrop-filter: blur(20px); display: flex; align-items: center; gap: 10px;">
+              <div class="coin-ring" style="width: 36px; height: 36px; border-width: 1px;">
+                <div style="font-size: 10px; font-weight: 500; color: #EF9F27;">30d</div>
+              </div>
+              <div>
+                <div style="font-size: 10px; color: rgba(255,255,255,0.5); letter-spacing: 0.5px;">Next</div>
+                <div style="font-size: 13px; font-weight: 500;">60d · 13 left</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Home screen widget -->
+          <div style="margin-top: 32px;">
+            <div class="label" style="margin-bottom: 10px; text-align: center;">Home screen · medium</div>
+            <div style="padding: 18px; background: rgba(255,255,255,0.04); border-radius: 20px; border: 0.5px solid rgba(255,255,255,0.08);">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px;">
+                <div>
+                  <div style="font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 6px;">Untouched</div>
+                  <div style="font-size: 13px; font-weight: 500;">Cigarettes.</div>
+                </div>
+                <div class="coin-ring" style="width: 40px; height: 40px; border-width: 1px;">
+                  <div style="font-size: 11px; font-weight: 500; color: #EF9F27;">30d</div>
+                </div>
+              </div>
+              <div style="display: flex; align-items: baseline; gap: 8px;">
+                <div style="font-size: 48px; font-weight: 500; letter-spacing: -2.5px; line-height: 1;">47</div>
+                <div style="font-size: 13px; color: rgba(255,255,255,0.5);">days</div>
+              </div>
+              <div style="display: flex; gap: 2px; margin-top: 12px;">
+                <div style="flex: 1; height: 3px; background: #EF9F27; border-radius: 2px;"></div>
+                <div style="flex: 1; height: 3px; background: #EF9F27; border-radius: 2px;"></div>
+                <div style="flex: 1; height: 3px; background: #EF9F27; border-radius: 2px;"></div>
+                <div style="flex: 1; height: 3px; background: #EF9F27; border-radius: 2px;"></div>
+                <div style="flex: 1; height: 3px; background: #EF9F27; border-radius: 2px;"></div>
+                <div style="flex: 1; height: 3px; background: #EF9F27; border-radius: 2px;"></div>
+                <div style="flex: 1; height: 3px; background: rgba(239,159,39,0.8); border-radius: 2px;"></div>
+                <div style="flex: 1; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px;"></div>
+                <div style="flex: 1; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px;"></div>
+                <div style="flex: 1; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
