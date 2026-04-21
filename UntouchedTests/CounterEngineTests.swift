@@ -73,10 +73,19 @@ final class CounterEngineTests: XCTestCase {
     }
 
     func testYearlyMilestonesGeneratePastYear1() {
-        let counter = makeCounter(startedDaysAgo: 730) // 2 years
+        // 800 days comfortably crosses year 2 (calendar year lengths vary).
+        let counter = makeCounter(startedDaysAgo: 800)
         let unearned = CounterEngine.unearnedMilestones(for: counter)
-        // All fixed cases plus year2.
         XCTAssertEqual(unearned.map(\.dayValue), [1, 7, 30, 60, 90, 180, 270, 365, 730])
+    }
+
+    func testProgressionCapsAtYearly3() {
+        // Four years in — all nine coins unlocked, no further milestones.
+        let counter = makeCounter(startedDaysAgo: 365 * 4 + 10)
+        let unearned = CounterEngine.unearnedMilestones(for: counter)
+        let last = unearned.last
+        XCTAssertEqual(last, .yearly(3))
+        XCTAssertEqual(unearned.count, 9)
     }
 
     // MARK: - nextMilestone
@@ -84,23 +93,29 @@ final class CounterEngineTests: XCTestCase {
     func testNextMilestoneAtDay0IsDay1() {
         let counter = makeCounter(startedDaysAgo: 0)
         let next = CounterEngine.nextMilestone(for: counter)
-        XCTAssertEqual(next?.0.dayValue, 1)
+        XCTAssertEqual(next?.milestone.dayValue, 1)
         XCTAssertEqual(next?.daysRemaining, 1)
     }
 
     func testNextMilestonePastYear1IsYear2() {
         let counter = makeCounter(startedDaysAgo: 400)
         let next = CounterEngine.nextMilestone(for: counter)
-        XCTAssertEqual(next?.0.dayValue, 730)
+        XCTAssertEqual(next?.milestone, .yearly(2))
+    }
+
+    func testNextMilestoneNilPastFinalCoin() {
+        let counter = makeCounter(startedDaysAgo: 365 * 4)
+        XCTAssertNil(CounterEngine.nextMilestone(for: counter))
     }
 
     // MARK: - Progress
 
     func testProgressHalfway() {
-        // day 45 between .month1 (30) and .month2 (60) → 15/30 = 0.5
+        // Calendar-based: halfway between month1 target and month2 target.
+        // Calendar months vary (28–31 days), so accept a loose tolerance.
         let counter = makeCounter(startedDaysAgo: 45)
         let p = CounterEngine.progressToNextMilestone(for: counter)
-        XCTAssertEqual(p, 0.5, accuracy: 0.01)
+        XCTAssertEqual(p, 0.5, accuracy: 0.1)
     }
 
     func testProgressClampedBetween0And1() {
@@ -108,6 +123,31 @@ final class CounterEngineTests: XCTestCase {
         XCTAssert((0.0...1.0).contains(p1))
         let p2 = CounterEngine.progressToNextMilestone(for: makeCounter(startedDaysAgo: 1000))
         XCTAssert((0.0...1.0).contains(p2))
+    }
+
+    func testProgressIsFullPastFinalCoin() {
+        let counter = makeCounter(startedDaysAgo: 365 * 4)
+        XCTAssertEqual(CounterEngine.progressToNextMilestone(for: counter), 1.0)
+    }
+
+    // MARK: - Calendar-aware unlocks
+
+    func testMonth1UnlocksOnCalendarMonthBoundary() {
+        let cal = Calendar(identifier: .gregorian)
+        let start = parse("2026-01-15 10:00", calendar: cal)
+        let justBefore = parse("2026-02-14 23:59", calendar: cal)
+        let justAfter = parse("2026-02-15 00:01", calendar: cal)
+        XCTAssertFalse(Milestone.unlocked(from: start, to: justBefore, calendar: cal).contains(.month1))
+        XCTAssertTrue(Milestone.unlocked(from: start, to: justAfter, calendar: cal).contains(.month1))
+    }
+
+    func testMonth1OnJan31ClampsToFeb28() {
+        // Calendar clamps Jan 31 + 1 month to Feb 28/29 — the milestone hits
+        // the last day of February, not a fixed day-30 offset.
+        let cal = Calendar(identifier: .gregorian)
+        let start = parse("2026-01-31 10:00", calendar: cal)
+        let feb28 = parse("2026-02-28 12:00", calendar: cal)
+        XCTAssertTrue(Milestone.unlocked(from: start, to: feb28, calendar: cal).contains(.month1))
     }
 
     // MARK: - Helpers

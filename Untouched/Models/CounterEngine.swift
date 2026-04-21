@@ -22,33 +22,51 @@ enum CounterEngine {
     /// All milestones the counter has crossed but not yet earned, oldest first.
     /// On first app open in days, this may return multiple coins — present them
     /// one at a time (SPEC §12: "oldest first").
-    static func unearnedMilestones(for counter: Counter, now: Date = Date()) -> [Milestone] {
-        let days = daysUntouched(from: counter.startDate, to: now)
+    static func unearnedMilestones(
+        for counter: Counter,
+        now: Date = Date(),
+        calendar: Calendar = .current
+    ) -> [Milestone] {
         let earned = Set(counter.earnedCoins.map(\.dayValue))
-        return Milestone.upTo(days: days).filter { !earned.contains($0.dayValue) }
+        return Milestone.unlocked(from: counter.startDate, to: now, calendar: calendar)
+            .filter { !earned.contains($0.dayValue) }
     }
 
-    /// Next milestone the counter is working toward. `nil` only if days is
-    /// astronomically large (never expected in practice).
-    static func nextMilestone(for counter: Counter, now: Date = Date()) -> (Milestone, daysRemaining: Int)? {
-        let days = daysUntouched(from: counter.startDate, to: now)
-        if let m = Milestone.fixedCases.first(where: { $0.dayValue > days }) {
-            return (m, m.dayValue - days)
+    /// Next milestone the counter is working toward, with the exact unlock
+    /// date. `nil` once the user has crossed `yearly(maxYearlyCoin)` — past
+    /// that the shelf shows "keep going" and the count continues silently.
+    static func nextMilestone(
+        for counter: Counter,
+        now: Date = Date(),
+        calendar: Calendar = .current
+    ) -> (milestone: Milestone, daysRemaining: Int, targetDate: Date)? {
+        let today = calendar.startOfDay(for: now)
+        for m in Milestone.shelfHorizon {
+            let target = m.targetDate(from: counter.startDate, calendar: calendar)
+            if calendar.startOfDay(for: target) > today {
+                let days = calendar.dateComponents([.day], from: today, to: calendar.startOfDay(for: target)).day ?? 0
+                return (m, daysRemaining: max(0, days), targetDate: target)
+            }
         }
-        // Past year 1 — next yearly coin.
-        let nextYear = (days / 365) + 1
-        let m = Milestone.yearly(nextYear)
-        return (m, m.dayValue - days)
+        return nil
     }
 
-    /// Progress 0.0–1.0 from previous milestone to the next one.
-    static func progressToNextMilestone(for counter: Counter, now: Date = Date()) -> Double {
-        let days = daysUntouched(from: counter.startDate, to: now)
-        let milestones = Milestone.upTo(days: days)
-        let previousDay = milestones.last?.dayValue ?? 0
-        guard let (next, _) = nextMilestone(for: counter, now: now) else { return 0 }
-        let span = max(1, next.dayValue - previousDay)
-        let progress = Double(days - previousDay) / Double(span)
+    /// Progress 0.0–1.0 from previous milestone's target date to the next's.
+    /// Returns 1.0 once the user has passed the final coin — the bar stays
+    /// full rather than collapsing to empty.
+    static func progressToNextMilestone(
+        for counter: Counter,
+        now: Date = Date(),
+        calendar: Calendar = .current
+    ) -> Double {
+        guard let nextInfo = nextMilestone(for: counter, now: now, calendar: calendar) else {
+            return 1.0
+        }
+        let unlocked = Milestone.unlocked(from: counter.startDate, to: now, calendar: calendar)
+        let previousTarget = unlocked.last?.targetDate(from: counter.startDate, calendar: calendar)
+            ?? counter.startDate
+        let span = max(1, nextInfo.targetDate.timeIntervalSince(previousTarget))
+        let progress = now.timeIntervalSince(previousTarget) / span
         return min(1.0, max(0.0, progress))
     }
 }

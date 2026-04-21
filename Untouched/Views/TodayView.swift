@@ -51,10 +51,10 @@ struct TodayView: View {
         let longest = max(counter.allTimeLongest, days)
         let progress = CounterEngine.progressToNextMilestone(for: counter)
         let nextInfo = CounterEngine.nextMilestone(for: counter)
-        let nextDays = nextInfo?.0.dayValue
+        let nextLabel = nextInfo?.milestone.shortLabel.uppercased()
         let nextRemaining = nextInfo?.daysRemaining
-        let lastDays = Milestone.upTo(days: days).last?.dayValue ?? 0
-        let totalCoinsTarget = Milestone.fixedCases.count + 1
+        let lastLabel = Milestone.unlocked(from: counter.startDate).last?.shortLabel.uppercased()
+        let totalCoinsTarget = Milestone.shelfHorizon.count
 
         VStack(spacing: 0) {
             header(counter: counter)
@@ -63,6 +63,8 @@ struct TodayView: View {
             VStack(spacing: 22) {
                 VStack(spacing: 6) {
                     LabelText(text: Copy.Today.daysLabel)
+                        // Compensate trailing tracking (+2pt shifts ink left of center).
+                        .offset(x: 1)
                     let mega = Font.utMegaCount(digits: String(days).count)
                     Text("\(days)")
                         .font(mega.font)
@@ -70,14 +72,17 @@ struct TodayView: View {
                         .foregroundStyle(Color.utTextPrimary)
                         .monospacedDigit()
                         .animation(Motion.utDayRollover, value: days)
+                        // Compensate trailing tracking: negative tracking shifts
+                        // ink right of container center by |t|/2; cancel it.
+                        .offset(x: mega.tracking / 2)
                 }
                 .frame(maxWidth: .infinity)
 
                 VStack(spacing: 10) {
                     MilestoneProgressBar(
                         progress: progress,
-                        lastDays: lastDays > 0 ? lastDays : nil,
-                        nextDays: nextDays
+                        lastLabel: lastLabel,
+                        nextLabel: nextLabel
                     )
                     if let nextRemaining {
                         Text(Copy.Today.daysUntilNext(nextRemaining))

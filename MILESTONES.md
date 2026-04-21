@@ -6,20 +6,36 @@ Day 0 is the start date. Day 1 is "24 hours". Every milestone is inclusive — c
 
 ---
 
-## Coin schedule (fixed milestones)
+## Coin schedule
 
-| Coin | Day | Enum case | Title copy | Short label |
-|---|---|---|---|---|
-| Day 1 | 1 | `.day1` | "Twenty-four hours." | "1 day" |
-| Week 1 | 7 | `.week1` | "One week." | "7 days" |
-| Month 1 | 30 | `.month1` | "Thirty days." | "30 days" |
-| Month 2 | 60 | `.month2` | "Sixty days." | "60 days" |
-| Month 3 | 90 | `.month3` | "Ninety days." | "90 days" |
-| Month 6 | 180 | `.month6` | "Six months." | "180 days" |
-| Month 9 | 270 | `.month9` | "Nine months." | "270 days" |
-| Year 1 | 365 | `.year1` | "One year." | "365 days" |
+Month and year milestones are **calendar-based** — a counter starting Jan 15
+earns `month1` on Feb 15, `month3` on Apr 15, `year1` on Jan 15 next year.
+Day and week milestones are exact offsets from `startDate`.
 
-After year 1, yearly coins generate dynamically: `year2` at day 730, `year3` at day 1095, and so on — one per 365 days with no upper bound.
+`dayValue` below is the stable integer key persisted on `EarnedCoin` (nominal
+day count used as an identifier only — the actual unlock date varies with the
+user's start date and the calendar).
+
+| Coin | Unlocks at | Nominal day | Enum case | Title copy | Short label |
+|---|---|---|---|---|---|
+| Day 1 | start + 1 day | 1 | `.day1` | "Twenty-four hours." | "24h" |
+| Week 1 | start + 7 days | 7 | `.week1` | "One week." | "7d" |
+| Month 1 | start + 1 month | 30 | `.month1` | "One month." | "1mo" |
+| Month 2 | start + 2 months | 60 | `.month2` | "Two months." | "2mo" |
+| Month 3 | start + 3 months | 90 | `.month3` | "Three months." | "3mo" |
+| Month 6 | start + 6 months | 180 | `.month6` | "Six months." | "6mo" |
+| Month 9 | start + 9 months | 270 | `.month9` | "Nine months." | "9mo" |
+| Year 1 | start + 1 year | 365 | `.year1` | "One year." | "1y" |
+| Year 2 | start + 2 years | 730 | `.yearly(2)` | "2 years." | "2y" |
+| Year 3 | start + 3 years | 1095 | `.yearly(3)` | "3 years." | "3y" |
+
+**Horizon cap.** After `yearly(3)` the shelf stops issuing coins and shows a
+"keep going" card instead. The day count continues, the running streak is
+still honored, but there are no further celebrations — the user has passed
+the shelf.
+
+Edge case: a counter starting on Jan 31 earns `month1` on Feb 28/29 (calendar
+clamps to the last valid day of the target month).
 
 ---
 
@@ -56,7 +72,8 @@ This is the whole point of the SPEC's "never store an incremented integer" rule.
 - [ ] Multi-milestone sessions (e.g. first app open on day 10) unlock all crossed milestones, oldest first.
 - [ ] Reset preserves all previously earned coins on the shelf.
 - [ ] Day count rolls over correctly across DST forward and DST back.
-- [ ] Yearly coins (`year2`, `year3`, ...) generate at the correct day boundary past 365.
+- [ ] Yearly coins (`year2`, `year3`) generate at the correct calendar-year boundary past `year1`.
+- [ ] No new coins awarded after `yearly(3)` — shelf shows "keep going" instead.
 - [ ] Widget timeline emits refresh entries at midnight of next day + next milestone day (whichever is sooner).
 - [ ] Silent milestone notifications fire at midnight of the coin day with `.passive` interruption level only.
 

@@ -19,6 +19,7 @@ struct ShelfView: View {
                 VStack(alignment: .leading, spacing: 24) {
                     header
                     coinsGrid
+                    if pastHorizon { keepGoingCard }
                     previousRunsCard
                 }
                 .padding(.horizontal, 22)
@@ -49,7 +50,7 @@ struct ShelfView: View {
 
     private var header: some View {
         let earned = counter.earnedCoins.count
-        let totalTarget = Milestone.fixedCases.count + 1
+        let totalTarget = Milestone.shelfHorizon.count
         let ahead = max(0, totalTarget - earned)
         return VStack(alignment: .leading, spacing: 8) {
             LabelText(text: Copy.Shelf.title)
@@ -75,9 +76,7 @@ struct ShelfView: View {
     private var coinsGrid: some View {
         let earnedCoins = counter.earnedCoins.sorted(by: { $0.dayValue < $1.dayValue })
         let earnedValues = Set(earnedCoins.map(\.dayValue))
-        let days = CounterEngine.daysUntouched(for: counter)
-        let horizon = Milestone.upTo(days: max(days + 365 * 3, 365 * 3))
-        let lockedToShow = horizon
+        let lockedToShow = Milestone.shelfHorizon
             .filter { !earnedValues.contains($0.dayValue) }
             .prefix(lockedPreviewCount)
         let nextLockedDay = lockedToShow.first?.dayValue
@@ -87,9 +86,31 @@ struct ShelfView: View {
                 earnedCell(coin: coin)
             }
             ForEach(Array(lockedToShow), id: \.dayValue) { milestone in
-                lockedCell(milestone: milestone, isNext: milestone.dayValue == nextLockedDay, days: days)
+                lockedCell(milestone: milestone, isNext: milestone.dayValue == nextLockedDay)
             }
         }
+    }
+
+    private var pastHorizon: Bool {
+        let earnedValues = Set(counter.earnedCoins.map(\.dayValue))
+        return Milestone.shelfHorizon.allSatisfy { earnedValues.contains($0.dayValue) }
+    }
+
+    private var keepGoingCard: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            LabelText(text: Copy.Shelf.keepGoingLabel, color: Color.utAmber)
+            Text(Copy.Shelf.keepGoingBody)
+                .font(.utBody)
+                .foregroundStyle(Color.utTextSecondary)
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.utSurface)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .strokeBorder(Color.utBorder, lineWidth: 0.5)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private func earnedCell(coin: EarnedCoin) -> some View {
@@ -108,12 +129,15 @@ struct ShelfView: View {
         .buttonStyle(.plain)
     }
 
-    private func lockedCell(milestone: Milestone, isNext: Bool, days: Int) -> some View {
+    private func lockedCell(milestone: Milestone, isNext: Bool) -> some View {
         VStack(spacing: 10) {
             CoinRing(value: milestone.dayValue, earned: false, size: .medium, labelStyle: .milestone)
             Group {
                 if isNext {
-                    let remaining = max(0, milestone.dayValue - days)
+                    let remaining = CounterEngine.daysUntouched(
+                        from: Date(),
+                        to: milestone.targetDate(from: counter.startDate)
+                    )
                     Text(Copy.Shelf.toGo(remaining).uppercased())
                 } else {
                     Text(Copy.Shelf.dashPlaceholder)

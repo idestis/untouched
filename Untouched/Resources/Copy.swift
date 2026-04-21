@@ -66,6 +66,8 @@ enum Copy {
         static let close = "Close"
         static let backToToday = "Back to today"
         static let dashPlaceholder = "—"
+        static let keepGoingLabel = "KEEP GOING"
+        static let keepGoingBody = "The shelf ends here. The days don't."
         static func summary(earned: Int, ahead: Int) -> String {
             "\(earned) earned · \(ahead) ahead"
         }
@@ -176,9 +178,9 @@ enum Copy {
     enum Milestones {
         static let day1 = "Twenty-four hours."
         static let week1 = "One week."
-        static let month1 = "Thirty days."
-        static let month2 = "Sixty days."
-        static let month3 = "Ninety days."
+        static let month1 = "One month."
+        static let month2 = "Two months."
+        static let month3 = "Three months."
         static let month6 = "Six months."
         static let month9 = "Nine months."
         static let year1 = "One year."

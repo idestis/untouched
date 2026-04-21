@@ -102,17 +102,17 @@ struct EarnedCoin {
     let runStartDate: Date        // which run earned this coin
 }
 
-enum Milestone: Int, CaseIterable {
-    case day1      = 1            // 24 hours
-    case week1     = 7
-    case month1    = 30
-    case month2    = 60
-    case month3    = 90
-    case month6    = 180
-    case month9    = 270
-    case year1     = 365
-    // after year1, every 365 days: year2, year3, ... (generated dynamically)
+enum Milestone: Equatable, Hashable {
+    case day1, week1                              // fixed day offsets
+    case month1, month2, month3, month6, month9   // calendar months
+    case year1                                    // calendar year
+    case yearly(Int)                              // year2, year3 — cap at 3
 }
+// Month/year milestones are calendar-based: a counter starting Jan 15 earns
+// month1 on Feb 15, year1 on Jan 15 next year. Day/week milestones are exact
+// 1-day / 7-day offsets. `dayValue` is a stable integer key for storage only.
+// After yearly(3) the shelf switches to a "keep going" motivator — no more
+// coins are awarded; the count continues silently.
 ```
 
 ### UserProfile (local)
