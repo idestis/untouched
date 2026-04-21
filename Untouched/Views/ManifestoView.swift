@@ -7,14 +7,16 @@ struct ManifestoView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Spacer(minLength: 32)
+            LogoMark(size: 44)
+                .padding(.leading, -4)
+                .padding(.top, 4)
+                .padding(.bottom, 8)
 
             LabelText(text: Copy.Manifesto.label)
-                .padding(.bottom, 24)
+                .padding(.bottom, 28)
 
-            Text(Copy.Manifesto.title)
+            titleText
                 .font(.utH1)
-                .foregroundStyle(Color.utTextPrimary)
                 .lineSpacing(4)
                 .fixedSize(horizontal: false, vertical: true)
 
@@ -34,6 +36,15 @@ struct ManifestoView: View {
         .padding(.vertical, 22)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .background(Color.utBackground.ignoresSafeArea())
+    }
+
+    private var titleText: Text {
+        Text(Copy.Manifesto.titleLine1 + "\n")
+            .foregroundColor(Color.utTextPrimary)
+        + Text(Copy.Manifesto.titleLine2 + "\n")
+            .foregroundColor(Color.utTextPrimary)
+        + Text(Copy.Manifesto.titleLine3)
+            .foregroundColor(Color.utTextTertiary)
     }
 
     private func completeOnboarding() {

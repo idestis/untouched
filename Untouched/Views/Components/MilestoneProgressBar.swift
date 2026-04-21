@@ -1,36 +1,45 @@
 import SwiftUI
 
-/// Thin amber bar from previous milestone → next milestone.
-/// Day count bridge under the mega number on Today.
+/// Segmented amber bar showing progress from the previous milestone to the next.
 struct MilestoneProgressBar: View {
     /// 0.0 to 1.0 from previous to next milestone.
     let progress: Double
-    /// Label like "30d" → "60d" at the two ends (optional).
-    var leadingLabel: String? = nil
-    var trailingLabel: String? = nil
+    var lastDays: Int? = nil
+    var nextDays: Int? = nil
+    var segments: Int = 10
 
     var body: some View {
-        VStack(spacing: 6) {
-            GeometryReader { geo in
-                ZStack(alignment: .leading) {
-                    Capsule().fill(Color.utSurface)
-                    Capsule()
-                        .fill(Color.utAmber)
-                        .frame(width: max(0, min(1, progress)) * geo.size.width)
-                }
-            }
-            .frame(height: 3)
-
-            if leadingLabel != nil || trailingLabel != nil {
+        VStack(spacing: 10) {
+            if lastDays != nil || nextDays != nil {
                 HStack {
-                    if let l = leadingLabel {
-                        Text(l).font(.utLabel).foregroundStyle(Color.utTextTertiary).tracking(1.5)
+                    if let lastDays {
+                        label(Copy.Today.progressLast, value: "\(lastDays)D", color: Color.utTextTertiary)
                     }
                     Spacer()
-                    if let t = trailingLabel {
-                        Text(t).font(.utLabel).foregroundStyle(Color.utTextTertiary).tracking(1.5)
+                    if let nextDays {
+                        label(Copy.Today.progressNext, value: "\(nextDays)D", color: Color.utAmber)
                     }
                 }
+            }
+            segmentsRow
+        }
+    }
+
+    private func label(_ title: String, value: String, color: Color) -> some View {
+        Text("\(title) · \(value)")
+            .font(.utLabel)
+            .tracking(1.5)
+            .foregroundStyle(color)
+    }
+
+    private var segmentsRow: some View {
+        let clamped = max(0, min(1, progress))
+        let filledCount = Int((clamped * Double(segments)).rounded(.down))
+        return HStack(spacing: 4) {
+            ForEach(0..<segments, id: \.self) { index in
+                Capsule()
+                    .fill(index < filledCount ? Color.utAmber : Color.utBorder)
+                    .frame(height: 4)
             }
         }
     }

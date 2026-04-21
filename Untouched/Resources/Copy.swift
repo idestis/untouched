@@ -4,34 +4,52 @@ import Foundation
 /// Ready for future localization — every string gets a distinct key path.
 enum Copy {
     enum Manifesto {
-        static let label = "MANIFESTO"
-        static let title = "Name one thing.\nStep away from it.\nStart over if you slip."
-        static let body = "We won't check. You will. The count is just for you."
+        static let label = "UNTOUCHED"
+        static let titleLine1 = "Name one thing."
+        static let titleLine2 = "Step away from it."
+        static let titleLine3 = "Start over if you slip."
+        static let body = "We won't check. You will.\nThe count is just for you."
         static let cta = "I understand"
     }
 
     enum NameIt {
         static let prompt = "What are you stepping away from?"
         static let placeholder = "Name it"
-        static let startLabel = "Since"
+        static let privacyNote = "Private. Stays on this device."
+        static let startLabel = "Starting from"
         static let startNow = "Right now"
+        static let startNowSubtitle = "Day 0"
         static let startPast = "A past date"
-        static let milestonesLabel = "MILESTONES"
+        static let startPastSubtitle = "Backfill"
+        static let dayLabel = "Day"
+        static let monthLabel = "Month"
+        static let yearLabel = "Year"
         static let cta = "Begin"
     }
 
     enum Today {
         static let daysLabel = "DAYS UNTOUCHED"
         static let coinsLabel = "COINS EARNED"
-        static let longestLabel = "LONGEST RUN"
+        static let longestLabel = "LONGEST"
         static let openShelf = "Open shelf"
         static let reset = "Reset"
         static let since = "Since"
+        static let progressLast = "LAST"
+        static let progressNext = "NEXT"
+        static let daysSuffix = "days"
+        static func ofTotal(_ n: Int) -> String { "of \(n)" }
+        static func daysUntilNext(_ n: Int) -> String {
+            "\(n) day\(n == 1 ? "" : "s") until the next one."
+        }
     }
 
     enum CoinEarned {
+        static let milestoneHeld = "Milestone held"
         static let engravingPrompt = "Engraving (optional)"
         static let engravingPlaceholder = "Something to mark the day"
+        static let tapToEngrave = "Tap to engrave"
+        static let tapToEdit = "Engraved · tap to edit"
+        static let doneButton = "Done"
         static let keep = "Keep it"
         static let share = "Share (private card)"
     }
@@ -41,15 +59,34 @@ enum Copy {
         static let earnedLabel = "EARNED"
         static let lockedLabel = "LOCKED"
         static let previousRunsLabel = "PREVIOUS RUNS"
+        static let previousRunsEmpty = "No resets yet."
+        static let noEngraving = "No engraving."
+        static let earnedOn = "Earned"
+        static let coinsEmpty = "No coins yet. The first comes at day one."
+        static let close = "Close"
+        static let backToToday = "Back to today"
+        static let dashPlaceholder = "—"
+        static func summary(earned: Int, ahead: Int) -> String {
+            "\(earned) earned · \(ahead) ahead"
+        }
+        static func resetsSummary(attempts: Int, longestDays: Int) -> String {
+            "\(attempts) attempt\(attempts == 1 ? "" : "s") · longest \(longestDays)d"
+        }
+        static func toGo(_ n: Int) -> String { "\(n) to go" }
     }
 
     enum Reset {
+        static let label = "Reset the count"
         static let title = "Tell the truth."
-        static let placeholder = "One sentence. For you only."
+        static let body = "Type what happened. One sentence. Only you will read it. The coins you earned stay earned."
+        static let placeholder = "Type what happened."
         static let minCharsHint = "At least 5 characters."
         static let callout = "Coins on your shelf stay. The count goes to zero."
         static func confirmCallout(days: Int, coins: Int) -> String {
             "You kept \(days) days. That happened. The \(coins) coin\(coins == 1 ? "" : "s") on your shelf are yours to keep."
+        }
+        static func characters(_ n: Int) -> String {
+            "\(n) character\(n == 1 ? "" : "s")"
         }
         static let confirm = "Reset to day 0"
         static let cancel = "Never mind"

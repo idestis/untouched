@@ -31,10 +31,22 @@ struct CoinRing: View {
         }
     }
 
+    enum LabelStyle { case number, milestone }
+
     let value: Int
     let earned: Bool
     var size: Size = .medium
     var glow: Bool = true
+    var labelStyle: LabelStyle = .number
+
+    private var displayText: String {
+        switch labelStyle {
+        case .number:
+            return "\(value)"
+        case .milestone:
+            return Milestone(dayValue: value)?.shortLabel ?? "\(value)"
+        }
+    }
 
     var body: some View {
         ZStack {
@@ -51,7 +63,7 @@ struct CoinRing: View {
                     )
             }
 
-            Text("\(value)")
+            Text(displayText)
                 .font(size.numberFont)
                 .foregroundStyle(earned ? Color.utAmber : Color.utTextTertiary)
                 .monospacedDigit()

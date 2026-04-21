@@ -48,6 +48,21 @@ enum Milestone: Equatable, Hashable {
         return out
     }
 
+    /// Compact label for coin faces: "24h", "7d", "30d", "6mo", "1y", "2y".
+    var shortLabel: String {
+        switch self {
+        case .day1:          return "24h"
+        case .week1:         return "7d"
+        case .month1:        return "30d"
+        case .month2:        return "60d"
+        case .month3:        return "90d"
+        case .month6:        return "6mo"
+        case .month9:        return "9mo"
+        case .year1:         return "1y"
+        case .yearly(let n): return "\(n)y"
+        }
+    }
+
     /// Build from a stored `dayValue` (the integer persisted on `EarnedCoin`).
     init?(dayValue: Int) {
         for c in Self.fixedCases where c.dayValue == dayValue {

@@ -42,6 +42,12 @@ extension Color {
     static let utAmberGlow  = Color(hex: "EF9F27").opacity(0.25)
     static let utDanger     = Color(hex: "E24B4A")
     static let utSuccess    = Color(hex: "97C459")
+
+    // Coin-earned aura. Pink magenta wash per design mockup; the only place
+    // this hue appears in the app.
+    static let utCoinAuraInner = Color(hex: "F064A2")
+    static let utCoinAuraMid   = Color(hex: "D43B7A")
+    static let utCoinAuraOuter = Color(hex: "6B1A3C")
 }
 
 extension Color {

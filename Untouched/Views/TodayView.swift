@@ -47,69 +47,109 @@ struct TodayView: View {
         let coinsEarned = counter.earnedCoins.count
         let longest = max(counter.allTimeLongest, days)
         let progress = CounterEngine.progressToNextMilestone(for: counter)
-        let next = CounterEngine.nextMilestone(for: counter)
+        let nextInfo = CounterEngine.nextMilestone(for: counter)
+        let nextDays = nextInfo?.0.dayValue
+        let nextRemaining = nextInfo?.daysRemaining
+        let lastDays = Milestone.upTo(days: days).last?.dayValue ?? 0
+        let totalCoinsTarget = Milestone.fixedCases.count + 1
 
-        VStack(alignment: .leading, spacing: 0) {
-            header
-            Spacer(minLength: 16)
+        VStack(spacing: 0) {
+            header(counter: counter)
+                .padding(.bottom, 18)
 
-            Chip(text: counter.name)
-                .padding(.bottom, 8)
+            VStack(spacing: 22) {
+                VStack(spacing: 6) {
+                    LabelText(text: Copy.Today.daysLabel)
+                    Text("\(days)")
+                        .font(.utMega)
+                        .tracking(-6)
+                        .foregroundStyle(Color.utTextPrimary)
+                        .monospacedDigit()
+                        .animation(Motion.utDayRollover, value: days)
+                }
+                .frame(maxWidth: .infinity)
 
-            Text("\(days)")
-                .font(.utMega)
-                .tracking(-6)
-                .foregroundStyle(Color.utTextPrimary)
-                .monospacedDigit()
-                .animation(Motion.utDayRollover, value: days)
+                VStack(spacing: 10) {
+                    MilestoneProgressBar(
+                        progress: progress,
+                        lastDays: lastDays > 0 ? lastDays : nil,
+                        nextDays: nextDays
+                    )
+                    if let nextRemaining {
+                        Text(Copy.Today.daysUntilNext(nextRemaining))
+                            .font(.utBody)
+                            .foregroundStyle(Color.utTextSecondary)
+                    }
+                }
 
-            LabelText(text: Copy.Today.daysLabel)
-                .padding(.top, 4)
-
-            MilestoneProgressBar(
-                progress: progress,
-                leadingLabel: progress > 0 ? "\(days)d" : nil,
-                trailingLabel: next.map { "\($0.0.dayValue)d" }
-            )
-            .padding(.top, 28)
-            .padding(.bottom, 28)
-
-            HStack(spacing: 12) {
-                bentoStat(label: Copy.Today.coinsLabel, value: "\(coinsEarned)")
-                bentoStat(label: Copy.Today.longestLabel, value: "\(longest)")
+                HStack(spacing: 12) {
+                    bentoStat(
+                        label: Copy.Today.coinsLabel,
+                        value: "\(coinsEarned)",
+                        suffix: Copy.Today.ofTotal(totalCoinsTarget)
+                    )
+                    bentoStat(
+                        label: Copy.Today.longestLabel,
+                        value: "\(longest)",
+                        suffix: Copy.Today.daysSuffix
+                    )
+                }
             }
 
-            Spacer()
+            Spacer(minLength: 0)
 
-            VStack(spacing: 10) {
-                PillButton(title: Copy.Today.openShelf) { showShelf = true }
-                PillButton(title: Copy.Today.reset, style: .ghost) { showReset = true }
+            GeometryReader { proxy in
+                let spacing: CGFloat = 10
+                let w = max(0, proxy.size.width - spacing)
+                HStack(spacing: spacing) {
+                    PillButton(title: Copy.Today.openShelf) { showShelf = true }
+                        .frame(width: w * 0.65)
+                    PillButton(title: Copy.Today.reset, style: .ghost) { showReset = true }
+                        .frame(width: w * 0.35)
+                }
             }
+            .frame(height: 54)
         }
         .padding(.horizontal, 22)
-        .padding(.vertical, 22)
+        .padding(.top, 14)
+        .padding(.bottom, 22)
     }
 
-    private var header: some View {
+    private func header(counter: Counter) -> some View {
         HStack {
-            LabelText(text: Copy.Widget.brand)
+            Chip(text: counter.name, dotColor: Color.utAmber)
             Spacer()
+            Chip(text: "\(Copy.Today.since) \(formattedStart(counter.startDate))")
+                .contentShape(Rectangle())
             Button { showSettings = true } label: {
-                Image(systemName: "gearshape")
+                Image(systemName: "ellipsis")
+                    .font(.system(size: 16, weight: .medium))
                     .foregroundStyle(Color.utTextSecondary)
+                    .frame(width: 28, height: 28)
+            }
+            .padding(.leading, 4)
+        }
+    }
+
+    private func bentoStat(label: String, value: String, suffix: String) -> some View {
+        BentoCard {
+            VStack(alignment: .leading, spacing: 10) {
+                LabelText(text: label)
+                HStack(alignment: .lastTextBaseline, spacing: 6) {
+                    Text(value)
+                        .font(.system(size: 28, weight: .medium))
+                        .foregroundStyle(Color.utTextPrimary)
+                        .monospacedDigit()
+                    Text(suffix)
+                        .font(.utBody)
+                        .foregroundStyle(Color.utTextTertiary)
+                }
             }
         }
     }
 
-    private func bentoStat(label: String, value: String) -> some View {
-        BentoCard {
-            VStack(alignment: .leading, spacing: 8) {
-                LabelText(text: label)
-                Text(value)
-                    .font(.utBodyMedium)
-                    .foregroundStyle(Color.utTextPrimary)
-            }
-        }
+    private func formattedStart(_ date: Date) -> String {
+        date.formatted(.dateTime.month(.abbreviated).day())
     }
 
     // MARK: - Logic

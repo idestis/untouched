@@ -13,32 +13,43 @@ struct NameItView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 28) {
-            LabelText(text: Copy.NameIt.prompt)
-
-            TextField(Copy.NameIt.placeholder, text: $name)
-                .font(.utNameDisplay)
-                .tracking(-1.5)
-                .foregroundStyle(Color.utTextPrimary)
-                .textInputAutocapitalization(.sentences)
-                .submitLabel(.done)
-
-            Divider().background(Color.utBorder)
+            VStack(alignment: .leading, spacing: 14) {
+                LabelText(text: Copy.NameIt.prompt)
+                TextField(Copy.NameIt.placeholder, text: $name)
+                    .font(.utNameDisplay)
+                    .tracking(-1.5)
+                    .foregroundStyle(Color.utTextPrimary)
+                    .textInputAutocapitalization(.sentences)
+                    .submitLabel(.done)
+                privacyNote
+            }
 
             VStack(alignment: .leading, spacing: 12) {
                 LabelText(text: Copy.NameIt.startLabel)
-                Picker("", selection: $startMode) {
-                    Text(Copy.NameIt.startNow).tag(StartMode.now)
-                    Text(Copy.NameIt.startPast).tag(StartMode.past)
+                HStack(spacing: 10) {
+                    startCard(
+                        title: Copy.NameIt.startNow,
+                        subtitle: Copy.NameIt.startNowSubtitle,
+                        isSelected: startMode == .now
+                    ) {
+                        startMode = .now
+                        HapticsService.selection()
+                    }
+                    startCard(
+                        title: Copy.NameIt.startPast,
+                        subtitle: Copy.NameIt.startPastSubtitle,
+                        isSelected: startMode == .past
+                    ) {
+                        startMode = .past
+                        HapticsService.selection()
+                    }
                 }
-                .pickerStyle(.segmented)
 
                 if startMode == .past {
-                    DatePicker("", selection: $pastDate, in: ...Date(), displayedComponents: .date)
-                        .labelsHidden()
+                    PastDatePicker(date: $pastDate)
+                        .padding(.top, 6)
                 }
             }
-
-            milestonesPreview
 
             Spacer()
 
@@ -52,21 +63,43 @@ struct NameItView: View {
         .background(Color.utBackground.ignoresSafeArea())
     }
 
-    private var milestonesPreview: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            LabelText(text: Copy.NameIt.milestonesLabel)
-            HStack(spacing: 8) {
-                ForEach(Milestone.fixedCases, id: \.dayValue) { m in
-                    Text("\(m.dayValue)")
-                        .font(.utLabel)
-                        .foregroundStyle(Color.utTextTertiary)
-                        .tracking(1.5)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .overlay(Capsule().strokeBorder(Color.utBorder, lineWidth: 0.5))
-                }
-            }
+    private var privacyNote: some View {
+        HStack(spacing: 8) {
+            Circle()
+                .fill(Color.utAmber)
+                .frame(width: 6, height: 6)
+            Text(Copy.NameIt.privacyNote)
+                .font(.utBody)
+                .foregroundStyle(Color.utTextSecondary)
         }
+    }
+
+    private func startCard(
+        title: String,
+        subtitle: String,
+        isSelected: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            VStack(alignment: .leading, spacing: 6) {
+                Text(title)
+                    .font(.system(size: 22, weight: .medium))
+                    .foregroundStyle(isSelected ? Color.utBackground : Color.utTextPrimary)
+                Text(subtitle)
+                    .font(.utBody)
+                    .foregroundStyle(isSelected ? Color.utBackground.opacity(0.55) : Color.utTextSecondary)
+            }
+            .padding(16)
+            .frame(maxWidth: .infinity, minHeight: 92, alignment: .topLeading)
+            .background(isSelected ? Color.utTextPrimary : Color.utSurface)
+            .overlay(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .strokeBorder(isSelected ? Color.clear : Color.utBorder, lineWidth: 0.5)
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .animation(.easeInOut(duration: 0.2), value: isSelected)
     }
 
     private var isValid: Bool {
