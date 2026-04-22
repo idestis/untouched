@@ -4,6 +4,7 @@ import SwiftData
 struct NameItView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Query private var profiles: [UserProfile]
 
     @State private var name: String = ""
     @State private var startMode: StartMode = .now
@@ -135,7 +136,9 @@ struct NameItView: View {
         modelContext.insert(counter)
         HapticsService.selection()
         WidgetTimelineService.reloadAll()
-        NotificationService.scheduleMilestones(for: counter)
+        if profiles.first?.notificationsEnabled == true {
+            NotificationService.scheduleMilestones(for: counter)
+        }
         dismiss()
     }
 }

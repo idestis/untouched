@@ -127,7 +127,11 @@ struct ResetView: View {
 
         HapticsService.heavy()
         WidgetTimelineService.reloadAll()
-        NotificationService.scheduleMilestones(for: counter)
+        if profiles.first?.notificationsEnabled == true {
+            NotificationService.scheduleMilestones(for: counter)
+        } else {
+            NotificationService.cancelMilestones(for: counter.id)
+        }
         if profiles.first?.coinsBackupEnabled == true {
             CoinBackupService.shared.sync(counter)
         }

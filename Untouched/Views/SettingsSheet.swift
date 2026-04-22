@@ -425,7 +425,19 @@ struct SettingsSheet: View {
 
     private func handleNotificationsChange(_ enabled: Bool) {
         if enabled {
-            Task { _ = await NotificationService.requestAuthorization() }
+            let counters = activeCounters
+            Task {
+                let granted = await NotificationService.requestAuthorization()
+                await MainActor.run {
+                    if granted {
+                        for counter in counters {
+                            NotificationService.scheduleMilestones(for: counter)
+                        }
+                    } else {
+                        profile?.notificationsEnabled = false
+                    }
+                }
+            }
         } else {
             NotificationService.removeAllPending()
         }
