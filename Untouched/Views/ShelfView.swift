@@ -12,7 +12,7 @@ struct ShelfView: View {
     private let lockedPreviewCount = 3
 
     var body: some View {
-        ZStack(alignment: .bottom) {
+        ZStack {
             Color.utBackground.ignoresSafeArea()
 
             ScrollView {
@@ -24,20 +24,12 @@ struct ShelfView: View {
                 }
                 .padding(.horizontal, 22)
                 .padding(.top, 18)
-                .padding(.bottom, 80)
+                .padding(.bottom, 24)
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
-
-            Button(action: { dismiss() }) {
-                Text(Copy.Shelf.backToToday)
-                    .font(.utBody)
-                    .foregroundStyle(Color.utTextSecondary)
-                    .padding(.vertical, 12)
-                    .padding(.horizontal, 24)
-            }
-            .buttonStyle(.plain)
-            .padding(.bottom, 20)
         }
+        .presentationBackground(Color.utBackground)
+        .presentationDragIndicator(.visible)
         .sheet(item: $selectedCoin) { coin in
             CoinDetailView(coin: coin)
         }
