@@ -1,4 +1,4 @@
-# Untouched — Name One Thing
+# Untouched — Name One. Step Away.
 
 > Name one thing. Step away from it. Start over if you slip.
 > We won't check. You will. The count is just for you.
