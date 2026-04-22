@@ -23,14 +23,18 @@ private struct LockScreenRectangularView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(entry.showName ? entry.counterName.uppercased() : Copy.Today.daysLabel)
+            Text(Copy.Widget.lockLabel(showName: entry.showName, name: entry.counterName))
                 .font(.system(size: 9, weight: .medium))
                 .tracking(2)
                 .widgetAccentable()
                 .lineLimit(1)
-            Text("\(entry.days)")
-                .font(.system(size: 28, weight: .medium))
-                .monospacedDigit()
+            HStack(alignment: .firstTextBaseline, spacing: 4) {
+                Text("\(entry.days)")
+                    .font(.system(size: 28, weight: .medium))
+                    .monospacedDigit()
+                Text(Copy.Widget.daysSuffix)
+                    .font(.system(size: 13, weight: .medium))
+            }
             if let remaining = entry.daysUntilNextCoin {
                 Text(Copy.Widget.daysUntilNextCoin(remaining))
                     .font(.system(size: 10))

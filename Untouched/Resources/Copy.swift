@@ -208,17 +208,26 @@ enum Copy {
     enum Widget {
         static let brand = "UNTOUCHED"
         static let daysSuffix = "days"
-        /// "47 days untouched" — Lock Screen inline, private.
+        /// "47d untouched" — Lock Screen inline, private. Compact so it fits
+        /// inside the iOS date line without truncation even at 3-digit days.
         static func daysUntouched(_ n: Int) -> String {
-            "\(n) day\(n == 1 ? "" : "s") untouched"
+            "\(n)d untouched"
         }
-        /// "Cigarettes · 47 days untouched" — inline with counter name on.
+        /// "Cigarettes · 47d" — inline with counter name on. The name is the
+        /// anchor; "untouched" is dropped to keep the whole string inside the
+        /// date-line budget.
         static func daysUntouchedNamed(_ n: Int, name: String) -> String {
-            "\(name) · \(daysUntouched(n))"
+            "\(name) · \(n)d"
         }
         /// "13 days until next coin" — Lock Screen rectangular.
         static func daysUntilNextCoin(_ n: Int) -> String {
             "\(n) day\(n == 1 ? "" : "s") until next coin"
+        }
+        /// "CIGARETTES · UNTOUCHED" or "UNTOUCHED" — tracked-uppercase anchor
+        /// line for the rectangular lock-screen widget, so the tile reads as
+        /// "Cigarettes, untouched" instead of ambiguous "Cigarettes / 6".
+        static func lockLabel(showName: Bool, name: String) -> String {
+            showName ? "\(name.uppercased()) · \(brand)" : brand
         }
         /// Compact day label for progress bar ends ("30d").
         static func dShort(_ n: Int) -> String { "\(n)d" }
