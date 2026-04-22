@@ -135,6 +135,7 @@ struct NameItView: View {
         modelContext.insert(counter)
         HapticsService.selection()
         WidgetTimelineService.reloadAll()
+        NotificationService.scheduleMilestones(for: counter)
         dismiss()
     }
 }

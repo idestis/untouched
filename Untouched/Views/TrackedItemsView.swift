@@ -295,6 +295,7 @@ struct TrackedItemsView: View {
         counter.archivedDate = Date()
         HapticsService.selection()
         WidgetTimelineService.reloadAll()
+        NotificationService.cancelMilestones(for: counter.id)
         counterPendingArchive = nil
     }
 
