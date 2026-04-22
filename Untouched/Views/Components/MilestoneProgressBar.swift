@@ -27,8 +27,8 @@ struct MilestoneProgressBar: View {
 
     private func label(_ title: String, value: String, color: Color) -> some View {
         Text("\(title) · \(value)")
-            .font(.utLabel)
-            .tracking(1.5)
+            .font(.system(size: 13, weight: .medium))
+            .tracking(1.8)
             .foregroundStyle(color)
     }
 

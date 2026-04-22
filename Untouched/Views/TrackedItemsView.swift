@@ -6,6 +6,8 @@ struct TrackedItemsView: View {
     @Environment(\.dismiss) private var dismiss
     @Query(sort: \Counter.createdDate) private var counters: [Counter]
 
+    var onSelect: ((Counter) -> Void)? = nil
+
     @State private var store = StoreService.shared
     @State private var showNameIt = false
     @State private var showPaywall = false
@@ -155,36 +157,46 @@ struct TrackedItemsView: View {
         let coins = counter.earnedCoins.count
         return BentoCard(padding: 16) {
             VStack(alignment: .leading, spacing: 14) {
-                HStack(alignment: .firstTextBaseline) {
-                    HStack(spacing: 8) {
-                        Circle().fill(Color.utAmber).frame(width: 6, height: 6)
-                        Text(counter.name.uppercased())
-                            .font(.utBodyMedium)
-                            .foregroundStyle(Color.utTextPrimary)
-                    }
-                    Spacer()
-                    HStack(alignment: .lastTextBaseline, spacing: 4) {
-                        Text("\(days)")
-                            .font(.system(size: 22, weight: .medium))
-                            .foregroundStyle(Color.utTextPrimary)
-                            .monospacedDigit()
-                        Text(Copy.Today.daysSuffix)
-                            .font(.utBody)
-                            .foregroundStyle(Color.utTextTertiary)
-                    }
-                }
+                Button {
+                    HapticsService.selection()
+                    onSelect?(counter)
+                    dismiss()
+                } label: {
+                    VStack(alignment: .leading, spacing: 10) {
+                        HStack(alignment: .firstTextBaseline) {
+                            HStack(spacing: 8) {
+                                Circle().fill(Color.utAmber).frame(width: 6, height: 6)
+                                Text(counter.name.uppercased())
+                                    .font(.utBodyMedium)
+                                    .foregroundStyle(Color.utTextPrimary)
+                            }
+                            Spacer()
+                            HStack(alignment: .lastTextBaseline, spacing: 4) {
+                                Text("\(days)")
+                                    .font(.system(size: 22, weight: .medium))
+                                    .foregroundStyle(Color.utTextPrimary)
+                                    .monospacedDigit()
+                                Text(Copy.Today.daysSuffix)
+                                    .font(.utBody)
+                                    .foregroundStyle(Color.utTextTertiary)
+                            }
+                        }
 
-                HStack {
-                    Text("\(Copy.Today.since.uppercased()) \(formattedDate(counter.startDate).uppercased())")
-                        .font(.utLabel)
-                        .tracking(1.5)
-                        .foregroundStyle(Color.utTextTertiary)
-                    Spacer()
-                    Text(Copy.Tracked.coinsKept(coins))
-                        .font(.utLabel)
-                        .tracking(1.5)
-                        .foregroundStyle(Color.utTextTertiary)
+                        HStack {
+                            Text("\(Copy.Today.since.uppercased()) \(formattedDate(counter.startDate).uppercased())")
+                                .font(.utLabel)
+                                .tracking(1.5)
+                                .foregroundStyle(Color.utTextTertiary)
+                            Spacer()
+                            Text(Copy.Tracked.coinsKept(coins))
+                                .font(.utLabel)
+                                .tracking(1.5)
+                                .foregroundStyle(Color.utTextTertiary)
+                        }
+                    }
+                    .contentShape(Rectangle())
                 }
+                .buttonStyle(.plain)
 
                 Button {
                     HapticsService.selection()

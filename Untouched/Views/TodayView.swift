@@ -13,8 +13,15 @@ struct TodayView: View {
     @State private var showCoinEarned = false
     @State private var showTracked = false
     @State private var pendingCoin: EarnedCoin? = nil
+    @State private var selectedCounterID: UUID? = nil
 
-    private var counter: Counter? { activeCounters.first }
+    private var counter: Counter? {
+        if let id = selectedCounterID,
+           let match = activeCounters.first(where: { $0.id == id }) {
+            return match
+        }
+        return activeCounters.first
+    }
 
     var body: some View {
         ZStack {
@@ -27,7 +34,11 @@ struct TodayView: View {
             }
         }
         .sheet(isPresented: $showSettings) { SettingsSheet() }
-        .sheet(isPresented: $showTracked) { TrackedItemsView() }
+        .sheet(isPresented: $showTracked) {
+            TrackedItemsView { picked in
+                selectedCounterID = picked.id
+            }
+        }
         .sheet(isPresented: $showShelf) {
             if let counter { ShelfView(counter: counter) }
         }
@@ -64,7 +75,7 @@ struct TodayView: View {
 
             VStack(spacing: 22) {
                 VStack(spacing: 6) {
-                    LabelText(text: Copy.Today.daysLabel)
+                    LabelText(text: "\(Copy.Today.daysLabel) · \(Copy.Today.since) \(formattedStart(counter.startDate))")
                         // Compensate trailing tracking (+2pt shifts ink left of center).
                         .offset(x: 1)
                     let mega = Font.utMegaCount(digits: String(days).count)
@@ -127,17 +138,16 @@ struct TodayView: View {
     }
 
     private func header(counter: Counter) -> some View {
-        HStack {
-            Button {
-                HapticsService.selection()
-                showTracked = true
-            } label: {
-                Chip(text: counter.name.uppercased(), dotColor: Color.utAmber)
-            }
-            .buttonStyle(.plain)
-            Spacer()
-            Chip(text: "\(Copy.Today.since) \(formattedStart(counter.startDate))")
-                .contentShape(Rectangle())
+        HStack(spacing: 10) {
+            CounterSwitcher(
+                counters: activeCounters,
+                selectedID: Binding(
+                    get: { selectedCounterID ?? activeCounters.first?.id },
+                    set: { selectedCounterID = $0 }
+                ),
+                onManage: { showTracked = true }
+            )
+            Spacer(minLength: 8)
             Button {
                 HapticsService.selection()
                 showSettings = true
@@ -145,11 +155,10 @@ struct TodayView: View {
                 Image(systemName: "gearshape")
                     .font(.system(size: 16, weight: .medium))
                     .foregroundStyle(Color.utTextSecondary)
-                    .frame(width: 28, height: 28)
+                    .frame(width: 32, height: 32)
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .padding(.leading, 4)
         }
     }
 
