@@ -77,6 +77,41 @@ enum Copy {
         static func toGo(_ n: Int) -> String { "\(n) to go" }
     }
 
+    enum Tracked {
+        static let title = "Tracking"
+        static let subtitle = "The things you've named."
+        static let activeLabel = "ACTIVE"
+        static let pastLabel = "PAST"
+        static let activeEmpty = "Nothing active yet."
+        static let pastEmpty = "Nothing here yet."
+        static let addAnother = "Name another"
+        static let addFirst = "Name one"
+        static let stopCounting = "Stop counting"
+        static let stopConfirmTitle = "Stop counting?"
+        static func stopConfirmBody(name: String, days: Int, coins: Int) -> String {
+            "You kept \(days) day\(days == 1 ? "" : "s") without \(name). The \(coins) coin\(coins == 1 ? "" : "s") on your shelf stay. Once stopped, this one won't resume."
+        }
+        static let stopConfirm = "Stop counting"
+        static let stopCancel = "Never mind"
+        static func coinsKept(_ n: Int) -> String {
+            "\(n) COIN\(n == 1 ? "" : "S") KEPT"
+        }
+        static func stoppedOn(_ date: String) -> String { "STOPPED \(date)" }
+    }
+
+    enum Summary {
+        static let stoppedLabel = "STOPPED"
+        static let coinsKeptLabel = "COINS KEPT"
+        static let coinsEmpty = "No coins earned this time."
+        static let close = "Close"
+        static func line(days: Int, coins: Int) -> String {
+            "\(days) day\(days == 1 ? "" : "s") · \(coins) coin\(coins == 1 ? "" : "s") kept."
+        }
+        static func range(from start: String, to end: String) -> String {
+            "\(start) — \(end)"
+        }
+    }
+
     enum Reset {
         static let label = "Reset the count"
         static let title = "Tell the truth."
@@ -111,16 +146,16 @@ enum Copy {
         static let appearanceDark = "Dark"
         static let appearanceSystem = "System"
         static let appearanceLight = "Light"
-        static let backupTitle = "Back up coins to iCloud"
-        static let backupSubtitle = "Private. Encrypted. Not visible in Files."
-        static let backupConsentTitle = "Back up coins to your iCloud?"
-        static let backupConsentMessage = "Coins are stored in your private iCloud key-value store and encrypted with a key from your iCloud Keychain. Only your Apple ID can read them. They're not visible in Files."
+        static let backupTitle = "iCloud Backup"
+        static let backupSubtitle = "Keep your coins across devices. Encrypted."
+        static let backupConsentTitle = "Back up to iCloud?"
+        static let backupConsentMessage = "Your coins go to your private iCloud, encrypted. Only your Apple ID can read them."
         static let backupConsentConfirm = "Turn on"
         static let backupConsentCancel = "Not now"
         static let backupUnavailableTitle = "iCloud unavailable"
-        static let backupUnavailableMessage = "Sign in to iCloud in Settings to back up coins across devices."
-        static let restoreCoinsTitle = "Restore coins"
-        static let restoreCoinsSubtitle = "Pull earned coins back from iCloud."
+        static let backupUnavailableMessage = "Sign in to iCloud in Settings to back up across devices."
+        static let restoreCoinsTitle = "Restore from iCloud"
+        static let restoreCoinsSubtitle = "Bring your coins back to this device."
         static let restoreCoinsRestoredTitle = "Coins restored."
         static func restoreCoinsRestoredMessage(_ n: Int) -> String {
             "\(n) coin\(n == 1 ? "" : "s") returned to your shelf."

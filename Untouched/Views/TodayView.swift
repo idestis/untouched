@@ -11,6 +11,7 @@ struct TodayView: View {
     @State private var showShelf = false
     @State private var showReset = false
     @State private var showCoinEarned = false
+    @State private var showTracked = false
     @State private var pendingCoin: EarnedCoin? = nil
 
     private var counter: Counter? { activeCounters.first }
@@ -26,6 +27,7 @@ struct TodayView: View {
             }
         }
         .sheet(isPresented: $showSettings) { SettingsSheet() }
+        .sheet(isPresented: $showTracked) { TrackedItemsView() }
         .sheet(isPresented: $showShelf) {
             if let counter { ShelfView(counter: counter) }
         }
@@ -126,7 +128,13 @@ struct TodayView: View {
 
     private func header(counter: Counter) -> some View {
         HStack {
-            Chip(text: counter.name, dotColor: Color.utAmber)
+            Button {
+                HapticsService.selection()
+                showTracked = true
+            } label: {
+                Chip(text: counter.name.uppercased(), dotColor: Color.utAmber)
+            }
+            .buttonStyle(.plain)
             Spacer()
             Chip(text: "\(Copy.Today.since) \(formattedStart(counter.startDate))")
                 .contentShape(Rectangle())
