@@ -122,13 +122,15 @@ struct TrackedItemsView: View {
                 }
             }
 
-            PillButton(
-                title: activeCounters.isEmpty ? Copy.Tracked.addFirst : Copy.Tracked.addAnother,
-                style: activeCounters.isEmpty ? .primary : .ghost
-            ) {
-                tapAdd()
+            if canAddMore || !store.isPremiumUnlocked {
+                PillButton(
+                    title: activeCounters.isEmpty ? Copy.Tracked.addFirst : Copy.Tracked.addAnother,
+                    style: activeCounters.isEmpty ? .primary : .ghost
+                ) {
+                    tapAdd()
+                }
+                .padding(.top, 4)
             }
-            .padding(.top, 4)
         }
     }
 
