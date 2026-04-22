@@ -8,10 +8,6 @@ struct RootView: View {
 
     @AppStorage("appearanceMode") private var appearanceModeRaw: Int = AppearanceMode.dark.rawValue
 
-    private var appearance: AppearanceMode {
-        AppearanceMode(rawValue: appearanceModeRaw) ?? .dark
-    }
-
     var body: some View {
         Group {
             if profiles.first?.hasCompletedOnboarding == true {
@@ -22,7 +18,6 @@ struct RootView: View {
                     .transition(.utScreen)
             }
         }
-        .preferredColorScheme(appearance.colorScheme)
         .task { ensureProfile() }
         .onAppear { AppearanceMode.apply(appearanceModeRaw) }
         .onChange(of: appearanceModeRaw) { _, raw in

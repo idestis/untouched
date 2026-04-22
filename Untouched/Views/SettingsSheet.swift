@@ -10,10 +10,6 @@ struct SettingsSheet: View {
 
     @AppStorage("appearanceMode") private var appearanceModeRaw: Int = AppearanceMode.dark.rawValue
 
-    private var appearance: AppearanceMode {
-        AppearanceMode(rawValue: appearanceModeRaw) ?? .dark
-    }
-
     @State private var showTimePicker = false
     @State private var showBackupConsent = false
     @State private var showBackupUnavailable = false
@@ -70,7 +66,6 @@ struct SettingsSheet: View {
                 }
             }
         }
-        .preferredColorScheme(appearance.colorScheme)
         .presentationBackground(Color.utBackground)
         .presentationDragIndicator(.visible)
         .sheet(isPresented: $showTimePicker) { timePickerSheet }
@@ -399,7 +394,6 @@ struct SettingsSheet: View {
                 .padding(.bottom, 22)
             }
         }
-        .preferredColorScheme(appearance.colorScheme)
         .presentationDetents([.height(340)])
         .presentationBackground(Color.utBackground)
     }

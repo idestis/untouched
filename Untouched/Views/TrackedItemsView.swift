@@ -12,11 +12,6 @@ struct TrackedItemsView: View {
     @State private var counterPendingArchive: Counter? = nil
     @State private var summaryCounter: Counter? = nil
 
-    @AppStorage("appearanceMode") private var appearanceModeRaw: Int = AppearanceMode.dark.rawValue
-    private var appearance: AppearanceMode {
-        AppearanceMode(rawValue: appearanceModeRaw) ?? .dark
-    }
-
     private var activeCounters: [Counter] {
         counters.filter { !$0.isArchived }
     }
@@ -55,7 +50,6 @@ struct TrackedItemsView: View {
                 }
             }
         }
-        .preferredColorScheme(appearance.colorScheme)
         .presentationBackground(Color.utBackground)
         .presentationDragIndicator(.visible)
         .sheet(isPresented: $showNameIt) { NameItView() }
