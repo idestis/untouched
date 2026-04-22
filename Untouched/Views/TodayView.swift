@@ -71,7 +71,7 @@ struct TodayView: View {
 
         VStack(spacing: 0) {
             header(counter: counter)
-                .padding(.bottom, 18)
+                .padding(.bottom, 36)
 
             VStack(spacing: 22) {
                 VStack(spacing: 6) {
@@ -103,6 +103,7 @@ struct TodayView: View {
                             .foregroundStyle(Color.utTextSecondary)
                     }
                 }
+                .padding(.bottom, 12)
 
                 HStack(spacing: 12) {
                     bentoStat(
