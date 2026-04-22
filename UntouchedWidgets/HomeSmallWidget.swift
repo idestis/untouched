@@ -5,7 +5,11 @@ struct HomeSmallWidget: Widget {
     let kind = "HomeSmall"
 
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: UntouchedProvider()) { entry in
+        AppIntentConfiguration(
+            kind: kind,
+            intent: CounterSelectionIntent.self,
+            provider: UntouchedProvider()
+        ) { entry in
             HomeSmallView(entry: entry)
                 .containerBackground(.black, for: .widget)
         }
@@ -19,22 +23,28 @@ private struct HomeSmallView: View {
     let entry: UntouchedEntry
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(entry.counterName.uppercased())
+        VStack(alignment: .leading, spacing: 4) {
+            Text(Copy.Widget.brand)
                 .font(.system(size: 9, weight: .medium))
                 .tracking(2)
-                .foregroundStyle(Color(hex: "EF9F27"))
+                .foregroundStyle(.white.opacity(0.4))
+            Text("\(entry.counterName).")
+                .font(.system(size: 16, weight: .medium))
+                .foregroundStyle(.white)
                 .lineLimit(1)
             Spacer()
-            Text("\(entry.days)")
-                .font(.system(size: 44, weight: .medium))
-                .monospacedDigit()
-                .foregroundStyle(.white)
-            Text("days")
-                .font(.system(size: 11))
-                .foregroundStyle(.white.opacity(0.5))
+            HStack(alignment: .firstTextBaseline, spacing: 4) {
+                Text("\(entry.days)")
+                    .font(.system(size: 44, weight: .medium))
+                    .monospacedDigit()
+                    .foregroundStyle(.white)
+                Text(Copy.Widget.daysSuffix)
+                    .font(.system(size: 11))
+                    .foregroundStyle(.white.opacity(0.5))
+            }
         }
-        .padding(14)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 16)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 }

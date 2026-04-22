@@ -5,11 +5,19 @@ struct LockScreenInlineWidget: Widget {
     let kind = "LockScreenInline"
 
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: UntouchedProvider()) { entry in
-            Text("\(entry.days) days untouched")
+        AppIntentConfiguration(
+            kind: kind,
+            intent: CounterSelectionIntent.self,
+            provider: UntouchedProvider()
+        ) { entry in
+            Text(
+                entry.showName
+                    ? Copy.Widget.daysUntouchedNamed(entry.days, name: entry.counterName)
+                    : Copy.Widget.daysUntouched(entry.days)
+            )
         }
         .configurationDisplayName("Days Untouched")
-        .description("A single number on your lock screen.")
+        .description("A single line on your lock screen.")
         .supportedFamilies([.accessoryInline])
     }
 }

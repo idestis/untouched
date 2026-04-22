@@ -5,12 +5,16 @@ struct HomeMediumWidget: Widget {
     let kind = "HomeMedium"
 
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: UntouchedProvider()) { entry in
+        AppIntentConfiguration(
+            kind: kind,
+            intent: CounterSelectionIntent.self,
+            provider: UntouchedProvider()
+        ) { entry in
             HomeMediumView(entry: entry)
                 .containerBackground(.black, for: .widget)
         }
         .configurationDisplayName("Untouched — Medium")
-        .description("Day count, progress, last earned coin.")
+        .description("Name, day count, and progress to the next coin.")
         .supportedFamilies([.systemMedium])
     }
 }
@@ -18,67 +22,68 @@ struct HomeMediumWidget: Widget {
 private struct HomeMediumView: View {
     let entry: UntouchedEntry
 
-    var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text(entry.counterName.uppercased())
-                .font(.system(size: 9, weight: .medium))
-                .tracking(2)
-                .foregroundStyle(Color(hex: "EF9F27"))
-                .lineLimit(1)
+    private let amber = Color(hex: "EF9F27")
 
-            HStack(alignment: .firstTextBaseline, spacing: 8) {
-                Text("\(entry.days)")
-                    .font(.system(size: 56, weight: .medium))
-                    .monospacedDigit()
-                    .foregroundStyle(.white)
-                Text("days")
-                    .font(.system(size: 12))
-                    .foregroundStyle(.white.opacity(0.5))
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(alignment: .top) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(Copy.Widget.brand)
+                        .font(.system(size: 10, weight: .medium))
+                        .tracking(2)
+                        .foregroundStyle(.white.opacity(0.4))
+                    Text("\(entry.counterName).")
+                        .font(.system(size: 22, weight: .medium))
+                        .foregroundStyle(.white)
+                        .lineLimit(1)
+                }
                 Spacer()
                 if let last = entry.lastEarnedDays {
-                    lastCoinChip(days: last)
+                    lastCoinRing(days: last)
                 }
             }
 
-            if let next = entry.nextMilestoneDays {
-                progressBar(days: entry.days, next: next)
-                HStack {
-                    Text("\(entry.days)d")
-                        .font(.system(size: 9, weight: .medium))
-                        .foregroundStyle(.white.opacity(0.4))
-                    Spacer()
-                    Text("\(next)d")
-                        .font(.system(size: 9, weight: .medium))
-                        .foregroundStyle(.white.opacity(0.4))
-                }
+            Spacer(minLength: 8)
+
+            HStack(alignment: .firstTextBaseline, spacing: 6) {
+                Text("\(entry.days)")
+                    .font(.system(size: 64, weight: .medium))
+                    .monospacedDigit()
+                    .foregroundStyle(.white)
+                Text(Copy.Widget.daysSuffix)
+                    .font(.system(size: 14))
+                    .foregroundStyle(.white.opacity(0.5))
+                Spacer()
+            }
+
+            if entry.nextMilestoneDays != nil {
+                Spacer(minLength: 8)
+                segmentedBar(progress: entry.windowProgress)
             }
         }
-        .padding(14)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 20)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 
-    private func lastCoinChip(days: Int) -> some View {
-        Text("\(days)")
-            .font(.system(size: 11, weight: .medium))
+    private func lastCoinRing(days: Int) -> some View {
+        Text(Copy.Widget.dShort(days))
+            .font(.system(size: 12, weight: .medium))
             .monospacedDigit()
-            .foregroundStyle(Color(hex: "EF9F27"))
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .overlay(
-                Capsule().strokeBorder(Color(hex: "EF9F27"), lineWidth: 1)
-            )
+            .foregroundStyle(amber)
+            .frame(width: 44, height: 44)
+            .overlay(Circle().strokeBorder(amber, lineWidth: 1))
     }
 
-    private func progressBar(days: Int, next: Int) -> some View {
-        let progress = max(0, min(1, Double(days) / Double(next)))
-        return GeometryReader { geo in
-            ZStack(alignment: .leading) {
-                Capsule().fill(.white.opacity(0.08))
+    private func segmentedBar(progress: Double, segments: Int = 10) -> some View {
+        let clamped = max(0, min(1, progress))
+        let filled = Int((clamped * Double(segments)).rounded(.down))
+        return HStack(spacing: 4) {
+            ForEach(0..<segments, id: \.self) { i in
                 Capsule()
-                    .fill(Color(hex: "EF9F27"))
-                    .frame(width: geo.size.width * progress)
+                    .fill(i < filled ? amber : Color.white.opacity(0.08))
+                    .frame(height: 4)
             }
         }
-        .frame(height: 3)
     }
 }

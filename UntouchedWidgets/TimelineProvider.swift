@@ -8,57 +8,86 @@ struct UntouchedEntry: TimelineEntry {
     let days: Int
     let nextMilestoneDays: Int?
     let lastEarnedDays: Int?
+    let daysUntilNextCoin: Int?
+    let windowProgress: Double
+    /// User-configurable. Lock screen widgets hide the counter's name when
+    /// false to keep the typed noun private on a public surface.
+    let showName: Bool
 
     static let placeholder = UntouchedEntry(
         date: Date(),
         counterName: "Untouched",
         days: 47,
         nextMilestoneDays: 60,
-        lastEarnedDays: 30
+        lastEarnedDays: 30,
+        daysUntilNextCoin: 13,
+        windowProgress: 0.56,
+        showName: true
     )
 }
 
-struct UntouchedProvider: TimelineProvider {
+struct UntouchedProvider: AppIntentTimelineProvider {
+    typealias Entry = UntouchedEntry
+    typealias Intent = CounterSelectionIntent
+
     func placeholder(in context: Context) -> UntouchedEntry { .placeholder }
 
-    func getSnapshot(in context: Context, completion: @escaping (UntouchedEntry) -> Void) {
-        completion(loadEntry() ?? .placeholder)
+    func snapshot(for configuration: CounterSelectionIntent, in context: Context) async -> UntouchedEntry {
+        loadEntry(for: configuration) ?? .placeholder
     }
 
-    func getTimeline(in context: Context, completion: @escaping (Timeline<UntouchedEntry>) -> Void) {
-        let now = Date()
-        let entry = loadEntry() ?? .placeholder
+    func timeline(
+        for configuration: CounterSelectionIntent,
+        in context: Context
+    ) async -> Timeline<UntouchedEntry> {
+        let entry = loadEntry(for: configuration) ?? .placeholder
         let nextMidnight = Calendar.current.nextDate(
-            after: now,
+            after: Date(),
             matching: DateComponents(hour: 0, minute: 0),
             matchingPolicy: .nextTime
-        ) ?? now.addingTimeInterval(3600)
-
-        let timeline = Timeline(entries: [entry], policy: .after(nextMidnight))
-        completion(timeline)
+        ) ?? Date().addingTimeInterval(3600)
+        return Timeline(entries: [entry], policy: .after(nextMidnight))
     }
 
-    /// Read the shared SwiftData store. Returns `nil` if no active counter.
-    private func loadEntry() -> UntouchedEntry? {
+    /// Look up the configured counter, falling back to the oldest active one
+    /// so the widget still renders before the user has picked — same behavior
+    /// as v1 non-configurable widgets.
+    private func loadEntry(for configuration: CounterSelectionIntent) -> UntouchedEntry? {
         guard let container = try? makeSharedContainer() else { return nil }
         let context = ModelContext(container)
 
-        let fetch = FetchDescriptor<Counter>(
-            predicate: #Predicate<Counter> { !$0.isArchived },
-            sortBy: [SortDescriptor(\Counter.createdDate)]
-        )
-        guard let counter = try? context.fetch(fetch).first else { return nil }
+        let counter: Counter?
+        if let idString = configuration.counter?.id,
+           let uuid = UUID(uuidString: idString) {
+            let fetch = FetchDescriptor<Counter>(
+                predicate: #Predicate<Counter> { $0.id == uuid && !$0.isArchived }
+            )
+            counter = try? context.fetch(fetch).first
+        } else {
+            let fetch = FetchDescriptor<Counter>(
+                predicate: #Predicate<Counter> { !$0.isArchived },
+                sortBy: [SortDescriptor(\Counter.createdDate)]
+            )
+            counter = try? context.fetch(fetch).first
+        }
 
+        guard let counter else { return nil }
+
+        let now = Date()
         let days = CounterEngine.daysUntouched(for: counter)
-        let next = CounterEngine.nextMilestone(for: counter)
+        let next = CounterEngine.nextMilestone(for: counter, now: now)
         let lastEarned = counter.earnedCoins.sorted(by: { $0.dayValue < $1.dayValue }).last
+        let progress = CounterEngine.progressToNextMilestone(for: counter, now: now)
 
         return UntouchedEntry(
-            date: Date(),
+            date: now,
             counterName: counter.name,
             days: days,
-            nextMilestoneDays: next?.0.dayValue,
-            lastEarnedDays: lastEarned?.dayValue
+            nextMilestoneDays: next?.milestone.dayValue,
+            lastEarnedDays: lastEarned?.dayValue,
+            daysUntilNextCoin: next?.daysRemaining,
+            windowProgress: progress,
+            showName: configuration.showName
         )
     }
 

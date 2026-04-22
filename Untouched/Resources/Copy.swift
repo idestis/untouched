@@ -207,7 +207,21 @@ enum Copy {
 
     enum Widget {
         static let brand = "UNTOUCHED"
-        static let daysSuffix = "days untouched"
+        static let daysSuffix = "days"
+        /// "47 days untouched" — Lock Screen inline, private.
+        static func daysUntouched(_ n: Int) -> String {
+            "\(n) day\(n == 1 ? "" : "s") untouched"
+        }
+        /// "Cigarettes · 47 days untouched" — inline with counter name on.
+        static func daysUntouchedNamed(_ n: Int, name: String) -> String {
+            "\(name) · \(daysUntouched(n))"
+        }
+        /// "13 days until next coin" — Lock Screen rectangular.
+        static func daysUntilNextCoin(_ n: Int) -> String {
+            "\(n) day\(n == 1 ? "" : "s") until next coin"
+        }
+        /// Compact day label for progress bar ends ("30d").
+        static func dShort(_ n: Int) -> String { "\(n)d" }
     }
 
     enum Milestones {
