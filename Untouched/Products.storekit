@@ -1,11 +1,11 @@
 {
-  "identifier" : "untouched",
+  "identifier" : "A1B2C3D4-E5F6-7890-ABCD-EF1234567890",
   "nonRenewingSubscriptions" : [],
   "products" : [
     {
       "displayPrice" : "4.99",
       "familyShareable" : true,
-      "internalID" : "lifetime",
+      "internalID" : "A1B2C3D4-0001",
       "localizations" : [
         {
           "description" : "Unlock up to three counters, forever. One payment, no renewal.",
@@ -19,15 +19,11 @@
     }
   ],
   "settings" : {
-    "_askToBuyEnabled" : false,
-    "_storefront" : {
-      "_countryCode" : "USA",
-      "_storefrontType" : "SQ"
-    }
+
   },
   "subscriptionGroups" : [],
   "version" : {
-    "major" : 4,
+    "major" : 3,
     "minor" : 0
   }
 }
