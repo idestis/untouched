@@ -388,7 +388,7 @@
 				CODE_SIGN_ENTITLEMENTS = Untouched/Untouched.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = 59M4W3VDQT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -422,7 +422,7 @@
 				CODE_SIGN_ENTITLEMENTS = Untouched/Untouched.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = 59M4W3VDQT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -456,7 +456,7 @@
 				CODE_SIGN_ENTITLEMENTS = UntouchedWidgetsExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = 59M4W3VDQT;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = UntouchedWidgets/Info.plist;
@@ -489,7 +489,7 @@
 				CODE_SIGN_ENTITLEMENTS = UntouchedWidgetsExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = 59M4W3VDQT;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = UntouchedWidgets/Info.plist;
