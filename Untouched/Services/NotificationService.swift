@@ -33,10 +33,15 @@ enum NotificationService {
         center.add(UNNotificationRequest(identifier: dailyId, content: content, trigger: t))
     }
 
+    /// Default fire time when the user hasn't picked one — a civilized
+    /// hour so backfilled counters (stored at start-of-day) don't page
+    /// someone at midnight on their milestone day.
+    static let defaultMilestoneTime = DateComponents(hour: 9, minute: 0)
+
     /// Schedule the big milestone notification. Louder and taller than the
     /// daily line: title + body + sound, so the system renders it as a
     /// two-line banner instead of a single-line nudge.
-    static func scheduleMilestone(date: Date, days: Int, counterId: UUID) {
+    private static func scheduleMilestone(at comps: DateComponents, days: Int, counterId: UUID) {
         let content = UNMutableNotificationContent()
         content.title = Milestone(dayValue: days).map { Copy.Milestones.title(for: $0) }
             ?? Copy.Notification.milestone(day: days)
@@ -47,9 +52,6 @@ enum NotificationService {
         // together in the notification center.
         content.threadIdentifier = "\(milestonePrefix)\(counterId.uuidString)"
 
-        let comps = Calendar.current.dateComponents(
-            [.year, .month, .day, .hour, .minute], from: date
-        )
         let trigger = UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)
 
         let id = "\(milestonePrefix)\(counterId.uuidString).\(days)"
@@ -60,12 +62,26 @@ enum NotificationService {
     /// Clear any previously-scheduled milestones for this counter and schedule
     /// fresh ones for every future milestone on the shelf horizon. Idempotent
     /// — safe to call on any state change (counter created, reset, backfill).
-    static func scheduleMilestones(for counter: Counter, now: Date = Date()) {
+    ///
+    /// Fires at `time` on each target calendar day — decoupled from
+    /// `counter.startDate`'s hour/minute so a backfill (stored at 00:00)
+    /// does not produce midnight alerts.
+    static func scheduleMilestones(
+        for counter: Counter,
+        at time: DateComponents = defaultMilestoneTime,
+        now: Date = Date(),
+        calendar: Calendar = .current
+    ) {
         cancelMilestones(for: counter.id)
+        let hour = time.hour ?? 9
+        let minute = time.minute ?? 0
         for milestone in Milestone.shelfHorizon {
-            let target = milestone.targetDate(from: counter.startDate)
-            guard target > now else { continue }
-            scheduleMilestone(date: target, days: milestone.dayValue, counterId: counter.id)
+            let target = milestone.targetDate(from: counter.startDate, calendar: calendar)
+            var comps = calendar.dateComponents([.year, .month, .day], from: target)
+            comps.hour = hour
+            comps.minute = minute
+            guard let fireDate = calendar.date(from: comps), fireDate > now else { continue }
+            scheduleMilestone(at: comps, days: milestone.dayValue, counterId: counter.id)
         }
     }
 

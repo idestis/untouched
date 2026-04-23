@@ -379,6 +379,11 @@ struct SettingsSheet: View {
                         set: { newDate in
                             let comps = Calendar.current.dateComponents([.hour, .minute], from: newDate)
                             profile?.setDailyCheckInTime(comps)
+                            if profile?.notificationsEnabled == true {
+                                for counter in activeCounters {
+                                    NotificationService.scheduleMilestones(for: counter, at: comps)
+                                }
+                            }
                         }
                     ),
                     displayedComponents: .hourAndMinute
@@ -426,12 +431,13 @@ struct SettingsSheet: View {
     private func handleNotificationsChange(_ enabled: Bool) {
         if enabled {
             let counters = activeCounters
+            let time = profile?.dailyCheckInTime ?? NotificationService.defaultMilestoneTime
             Task {
                 let granted = await NotificationService.requestAuthorization()
                 await MainActor.run {
                     if granted {
                         for counter in counters {
-                            NotificationService.scheduleMilestones(for: counter)
+                            NotificationService.scheduleMilestones(for: counter, at: time)
                         }
                     } else {
                         profile?.notificationsEnabled = false

@@ -136,8 +136,11 @@ struct NameItView: View {
         modelContext.insert(counter)
         HapticsService.selection()
         WidgetTimelineService.reloadAll()
-        if profiles.first?.notificationsEnabled == true {
-            NotificationService.scheduleMilestones(for: counter)
+        if let profile = profiles.first, profile.notificationsEnabled {
+            NotificationService.scheduleMilestones(
+                for: counter,
+                at: profile.dailyCheckInTime ?? NotificationService.defaultMilestoneTime
+            )
         }
         dismiss()
     }

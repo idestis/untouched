@@ -127,8 +127,11 @@ struct ResetView: View {
 
         HapticsService.heavy()
         WidgetTimelineService.reloadAll()
-        if profiles.first?.notificationsEnabled == true {
-            NotificationService.scheduleMilestones(for: counter)
+        if let profile = profiles.first, profile.notificationsEnabled {
+            NotificationService.scheduleMilestones(
+                for: counter,
+                at: profile.dailyCheckInTime ?? NotificationService.defaultMilestoneTime
+            )
         } else {
             NotificationService.cancelMilestones(for: counter.id)
         }
